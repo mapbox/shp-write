@@ -14,3 +14,9 @@ module.exports.geometries = {
     MULTIPOINTM: 28,
     MULTIPATCH: 31,
 };
+
+module.exports.jstypes = {
+    string: 'C',
+    number: 'N',
+    boolean: 'L'
+};

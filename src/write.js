@@ -1,7 +1,7 @@
 var types = require('./types'),
     dbf = require('dbf'),
     writePoints = require('./points'),
-    inferFields = require('./fields'),
+    getFields = require('./fields'),
     writePolygons = require('./poly').writePolygons;
 
 var recordHeaderLength = 8;
@@ -12,11 +12,14 @@ module.exports.geometries = geom;
 function geojson(features) {
     if (!features || !features.length) return null;
 
-    var fields = inferFields(features),
-        geometries = features.map(function(f) { return f.geometry; }),
-        properties = features.map(function(f) { return f.properties; });
+    var geometries = features.map(function(f) { return f.geometry; }),
+        properties = features.map(function(f) { return f.properties; }),
+        fields = getFields.geojson(features);
 
-    dbf.writer(fields, properties);
+    var dbfBuf = dbf.writer(fields, properties);
+    var shpShx = geom(geometries);
+
+    return dbfBuf;
 }
 
 function geom(geometries) {
@@ -62,7 +65,8 @@ function geom(geometries) {
     return {
         successful: true,
         shpHeader: shpHeaderBuf,
-        shxHeader: shxHeaderBuf
+        shxHeader: shxHeaderBuf,
+        shpData: data
     };
 }
 

@@ -4,3 +4,10 @@ module.exports.enlarge = function enlargeExtent(extent, pt) {
     if (pt[1] < extent.ymin) extent.ymin = pt[1];
     if (pt[1] > extent.ymax) extent.ymax = pt[1];
 };
+
+module.exports.enlargeExtent = function enlargeExtent(extent, ext) {
+    if (ext.xmax > extent.xmax) extent.xmax = ext.xmax;
+    if (ext.xmin < extent.xmin) extent.xmin = ext.xmin;
+    if (ext.ymax > extent.ymax) extent.ymax = ext.ymax;
+    if (ext.ymin < extent.ymin) extent.ymin = ext.ymin;
+};
