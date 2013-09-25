@@ -3,7 +3,7 @@ var ext = require('./extent');
 var recordHeaderLength = 8;
 
 module.exports = function writePoints(geometries, extent, fileLength) {
-    // 1 int + 2 doubles
+
     var recordLength = 20,
         shpBuffers = [],
         shxBuffers = [],
@@ -28,8 +28,6 @@ module.exports = function writePoints(geometries, extent, fileLength) {
         recordDataView.setFloat64(12, coords[0], true);
         recordDataView.setFloat64(20, coords[1], true);
 
-        // byte 0: offset in the shapefile of record start
-        // byte 4: length of the record in the shapefile
         shxRecordView.setInt32(0, fileLength / 2);
         shxRecordView.setInt32(4, 10);
 

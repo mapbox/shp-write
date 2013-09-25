@@ -1,3 +1,5 @@
+var ext = require('./extent');
+
 module.exports.writePolygons = function writePolygons(geometries, extent, fileLength) {
     var graphic = graphics[i - 1],
         numParts;
@@ -97,4 +99,4 @@ module.exports.writePolygons = function writePolygons(geometries, extent, fileLe
 
     // finally augment the overall file length tracker
     byteFileLength += byteLengthOfRecordInclHeader;
-}
+};

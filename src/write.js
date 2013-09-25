@@ -1,10 +1,25 @@
 var types = require('./types'),
+    dbf = require('dbf'),
     writePoints = require('./points'),
+    inferFields = require('./fields'),
     writePolygons = require('./poly').writePolygons;
 
 var recordHeaderLength = 8;
 
-module.exports = function write(geometries) {
+module.exports.geojson = geojson;
+module.exports.geometries = geom;
+
+function geojson(features) {
+    if (!features || !features.length) return null;
+
+    var fields = inferFields(features),
+        geometries = features.map(function(f) { return f.geometry; }),
+        properties = features.map(function(f) { return f.properties; });
+
+    dbf.writer(fields, properties);
+}
+
+function geom(geometries) {
 
     if (!geometries.length) return null;
     var TYPE = types.geometries[geometries[0].type.toUpperCase()];
@@ -49,7 +64,7 @@ module.exports = function write(geometries) {
         shpHeader: shpHeaderBuf,
         shxHeader: shxHeaderBuf
     };
-};
+}
 
 function writeEndian(view) {
     view.setInt32(0, 9994);
