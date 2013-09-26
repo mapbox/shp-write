@@ -1,32 +1,28 @@
 var expect = require('expect.js'),
-    write = require('../src/write');
+    write = require('../src/write').write;
 
 describe('write', function() {
-    it('null with no features', function() {
-        expect(write.geojson([])).to.eql(null);
-    });
 
     describe('point', function() {
-        it('point geometry', function() {
-            expect(write.geojson([{
-                type: 'Feature',
-                properties: {
-                    foo: 'bar'
-                },
-                geometry: {
-                    type: 'Point',
-                    coordinates: [0, 0]
-                }
-            }])).to.be.ok();
+        it('point geometry', function(done) {
+            write(
+                // field definitions
+                [{ type: 'C', name: 'foo' }],
+                // feature data
+                [{ foo: 'bar' }],
+                // geometry type
+                'POINT',
+                // geometries
+                [[0, 0]],
+                finish);
+
+            function finish(err, files) {
+                expect(err).to.be.null;
+                expect(files.shp).to.be.ok;
+                expect(files.shx).to.be.ok;
+                expect(files.dbf).to.be.ok;
+                done();
+            }
         });
     });
-
-    // describe('polyline', function() {
-    //     it('polyline geometry', function() {
-    //         expect(write([{
-    //             type: 'PolyLine',
-    //             coordinates: [[0, 0], [1, 2]]
-    //         }])).to.be.ok();
-    //     });
-    // });
 });

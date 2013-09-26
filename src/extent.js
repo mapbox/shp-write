@@ -11,3 +11,12 @@ module.exports.enlargeExtent = function enlargeExtent(extent, ext) {
     if (ext.ymax > extent.ymax) extent.ymax = ext.ymax;
     if (ext.ymin < extent.ymin) extent.ymin = ext.ymin;
 };
+
+module.exports.blank = function() {
+    return {
+        xmin: Number.MAX_VALUE,
+        ymin: Number.MAX_VALUE,
+        xmax: -Number.MAX_VALUE,
+        ymax: -Number.MAX_VALUE
+    };
+};

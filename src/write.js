@@ -1,78 +1,68 @@
 var types = require('./types'),
     dbf = require('dbf'),
     writePoints = require('./points'),
+    ext = require('./extent'),
     getFields = require('./fields'),
+    assert = require('assert'),
     writePolygons = require('./poly').writePolygons;
 
 var recordHeaderLength = 8;
 
-module.exports.geojson = geojson;
-module.exports.geometries = geom;
+module.exports.write = write;
 
-function geojson(features) {
-    if (!features || !features.length) return null;
+function write(fields, rows, geometry_type, geometries, callback) {
 
-    var geometries = features.map(function(f) { return f.geometry; }),
-        properties = features.map(function(f) { return f.properties; }),
-        fields = getFields.geojson(features);
+    var TYPE = types.geometries[geometry_type];
+    assert(TYPE, 'unknown geometry type');
 
-    var dbfBuf = dbf.writer(fields, properties);
-    var shpShx = geom(geometries);
-
-    return dbfBuf;
-}
-
-function geom(geometries) {
-
-    if (!geometries.length) return null;
-    var TYPE = types.geometries[geometries[0].type.toUpperCase()];
-    if (TYPE === undefined) return null;
-
-    var shpHeaderBuf = new ArrayBuffer(100),
-        shpHeaderView = new DataView(shpHeaderBuf),
-        shxHeaderBuf = new ArrayBuffer(100),
-        shxHeaderView = new DataView(shxHeaderBuf),
-        extent = {
-            xmin: Number.MAX_VALUE,
-            ymin: Number.MAX_VALUE,
-            xmax: -Number.MAX_VALUE,
-            ymax: -Number.MAX_VALUE
-        },
+    var shpHeader = getHeader(TYPE),
+        shxHeader = getHeader(TYPE),
+        extent = ext.blank(),
         fileLength = 100,
         byteShxLength = 100;
 
-    writeEndian(shpHeaderView);
-    writeEndian(shxHeaderView);
-
-    shpHeaderView.setInt32(32, TYPE, true);
-    shxHeaderView.setInt32(32, TYPE, true);
-
     var data;
+
     if (TYPE === 1) {
         data = writePoints(geometries, extent, fileLength);
         fileLength = data.fileLength;
     }
 
-    writeExtent(extent, shpHeaderView);
-    writeExtent(extent, shxHeaderView);
+    writeExtent(extent, shpHeader.view);
+    writeExtent(extent, shxHeader.view);
 
-    // overall shp file length in 16 bit words at byte 24 of shp header
-    shpHeaderView.setInt32(24, fileLength / 2);
+    shpHeader.view.setInt32(24, fileLength / 2);
+    shxHeader.view.setInt32(24, (50 + geometries.length * 4));
 
-    // overall shx file length in 16 bit words at byte 24 of shx header
-    shxHeaderView.setInt32(24, (50 + geometries.length * 4));
+    var dbfBuf = dbf.writer(fields, rows);
+        shp = combine(shpHeader.view, data.shp),
+        shx = combine(shxHeader.view, data.shx);
 
-    return {
-        successful: true,
-        shpHeader: shpHeaderBuf,
-        shxHeader: shxHeaderBuf,
-        shpData: data
-    };
+    callback(null, {
+        shp: shp,
+        shx: shx,
+        dbf: dbfBuf
+    });
 }
 
-function writeEndian(view) {
+function combine(a, b) {
+    var c = new ArrayBuffer(a.byteLength + b.byteLength),
+        d = new DataView(c);
+    for (var i = 0; i < a.byteLength; i++) {
+        d.setUint8(i, a.getUint8(i));
+    }
+    for (; i < a.byteLength + b.byteLength; i++) {
+        d.setUint8(i, b.getUint8(i - a.byteLength));
+    }
+    return d;
+}
+
+function getHeader(TYPE) {
+    var buf = new ArrayBuffer(100), view = new DataView(buf);
     view.setInt32(0, 9994);
     view.setInt32(28, 1000, true);
+    view.setInt32(32, TYPE, true);
+    return { view: view, buffer: buf };
 }
 
 function writeExtent(extent, view) {

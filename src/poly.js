@@ -9,12 +9,7 @@ module.exports.writePolygons = function writePolygons(geometries, extent, fileLe
     function writePolygon(geometry) {
         var graphic = graphics[i - 1],
             coords = geometry.coordinates,
-            featureExtent = {
-                xmin: Number.MAX_VALUE,
-                ymin: Number.MAX_VALUE,
-                xmax: -Number.MAX_VALUE,
-                ymax: -Number.MAX_VALUE
-            },
+            featureExtent = ext.blank(),
             pointsArrayBuf = new ArrayBuffer(16 * numPointsOverall),
             pointsArrayView = new DataView(pointsArrayBuf);
 
@@ -26,6 +21,7 @@ module.exports.writePolygons = function writePolygons(geometries, extent, fileLe
             shpRecordInfo = new ArrayBuffer(recordInfoLength),
             shpRecordInfoView = new DataView(shpRecordInfo);
 
+        // write index & expected size
         shpRecordInfoView.setInt32(0, i);
         shpRecordInfoView.setInt32(4, (byteLengthOfRecordContent / 2));
 
@@ -34,7 +30,6 @@ module.exports.writePolygons = function writePolygons(geometries, extent, fileLe
         shpRecordInfoView.setInt32(44, numParts, true);
         shpRecordInfoView.setInt32(48, numPointsOverall, true);
 
-        // now write in the indices of the part starts
         for (var partNum = 0; partNum < partsIndex.length; partNum++) {
             shpRecordInfoView.setInt32(52 + partNum * 4, partsIndex[partNum], true);
         }

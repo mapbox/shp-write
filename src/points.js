@@ -1,44 +1,37 @@
 var ext = require('./extent');
 
-var recordHeaderLength = 8;
+module.exports = function writePoints(coordinates, extent, fileLength) {
 
-module.exports = function writePoints(geometries, extent, fileLength) {
+    var contentLength = 28, // 8 header, 20 content
+        shpBuffer = new ArrayBuffer(coordinates.length * 28),
+        shpView = new DataView(shpBuffer),
+        shxBuffer = new ArrayBuffer(coordinates.length * 8),
+        shxView = new DataView(shxBuffer),
+        shpI, shxI;
 
-    var recordLength = 20,
-        shpBuffers = [],
-        shxBuffers = [],
-        totalLength = recordLength + recordHeaderLength;
+    coordinates.forEach(writePoint);
 
-    geometries.forEach(writePoint);
-
-    function writePoint(geometry, i) {
-        var coords = geometry.coordinates;
-
+    function writePoint(coords, i) {
         ext.enlarge(extent, coords);
 
-        var recordBuffer = new ArrayBuffer(totalLength),
-            recordDataView = new DataView(recordBuffer),
-            shxRecordBuffer = new ArrayBuffer(8),
-            shxRecordView = new DataView(shxRecordBuffer);
+        // write point index
+        shpView.setInt32(shpI + 0, i);
+        shpView.setInt32(shpI += 4, 10); shpI += 4;
 
-        recordDataView.setInt32(0, i);
-        recordDataView.setInt32(4, 10);
+        // write point coordinates
+        shpView.setInt32(shpI += 8, 1, true);
+        shpView.setFloat64(shpI += 12, coords[0], true);
+        shpView.setFloat64(shpI += 20, coords[1], true); shpI += 8;
 
-        recordDataView.setInt32(8, 1, true);
-        recordDataView.setFloat64(12, coords[0], true);
-        recordDataView.setFloat64(20, coords[1], true);
+        shxView.setInt32(shxI + 0, fileLength / 2);
+        shxView.setInt32(shxI += 4, 10); shxI += 4;
 
-        shxRecordView.setInt32(0, fileLength / 2);
-        shxRecordView.setInt32(4, 10);
-
-        shpBuffers.push(recordBuffer);
-        shxBuffers.push(shxRecordBuffer);
-        fileLength += totalLength;
+        fileLength += contentLength;
     }
 
     return {
         fileLength: fileLength,
-        shpBuffers: shpBuffers,
-        shxBuffers: shxBuffers
+        shp: shpView,
+        shx: shxView
     };
 };
