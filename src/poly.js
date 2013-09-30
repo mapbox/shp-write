@@ -1,60 +1,82 @@
 var ext = require('./extent');
 
-module.exports.writePolygons = function writePolygons(geometries, extent, fileLength) {
+module.exports = function writePoly(geometries, extent, fileLength, TYPE) {
 
-    geometries.forEach(writePolygon);
+    var headerLength = 48,
+        totalLength =
+            // header
+            8 +
+            // feature headers
+            (geometries.length * headerLength) +
+            // points
+            (totalPoints(geometries) * 16),
+        shpBuffer = new ArrayBuffer(totalLength),
+        shpView = new DataView(shpBuffer),
+        shxBuffer = new ArrayBuffer(geometries.length * 8),
+        shxView = new DataView(shxBuffer),
+        shpI = 0, shxI = 0;
 
-    return fileLength;
+    geometries.forEach(writePolyLine);
 
-    function writePolygon(geometry) {
-        var graphic = graphics[i - 1],
-            coords = geometry.coordinates,
-            featureExtent = ext.blank(),
-            pointsArrayBuf = new ArrayBuffer(16 * numPointsOverall),
-            pointsArrayView = new DataView(pointsArrayBuf);
+    function writePolyLine(coordinates, i) {
 
-        coords.forEach(writeCoordinate);
+        var featureExtent = ext.blank(),
+            contentLength = (coordinates.length * 16) + 48;
 
-        var recordInfoLength = 8 + 44 + 4 * numParts,
-            byteLengthOfRecordInclHeader = recordInfoLength + 16 * numPointsOverall,
-            byteLengthOfRecordContent = byteLengthOfRecordInclHeader - 8,
-            shpRecordInfo = new ArrayBuffer(recordInfoLength),
-            shpRecordInfoView = new DataView(shpRecordInfo);
+        coordinates.forEach(function(c) {
+            ext.enlarge(featureExtent, c);
+            ext.enlarge(extent, c);
+        });
 
-        // write index & expected size
-        shpRecordInfoView.setInt32(0, i);
-        shpRecordInfoView.setInt32(4, (byteLengthOfRecordContent / 2));
+        // index
+        shxView.setInt32(shxI, fileLength / 2); // length in 16-bit words
+        shxView.setInt32(shxI + 4, contentLength / 2);
 
-        shpRecordInfoView.setInt32(8, ShapeTypes[shapetype], true);
-        writeExtent(view, featureExtent);
-        shpRecordInfoView.setInt32(44, numParts, true);
-        shpRecordInfoView.setInt32(48, numPointsOverall, true);
+        // HEADER
+        // 4 record number
+        // 4 content length in 16-bit words (20/2)
+        shpView.setInt32(shpI, i);
+        shpView.setInt32(shpI + 4, contentLength / 2);
 
-        for (var partNum = 0; partNum < partsIndex.length; partNum++) {
-            shpRecordInfoView.setInt32(52 + partNum * 4, partsIndex[partNum], true);
-        }
+        shpI += 8;
 
-        var shxBuffer = new ArrayBuffer(8),
-            shxDataView = new DataView(shxBuffer);
+        shpView.setInt32(shpI, TYPE, true); // POLYLINE=3
 
-        shxDataView.setInt32(0, fileLength / 2);
-        shxDataView.setInt32(4, byteLengthOfRecordContent / 2);
+        // EXTENT
+        shpView.setFloat64(shpI + 4, featureExtent.xmin, true);
+        shpView.setFloat64(shpI + 12, featureExtent.ymin, true);
+        shpView.setFloat64(shpI + 20, featureExtent.xmax, true);
+        shpView.setFloat64(shpI + 28, featureExtent.ymax, true);
 
-        ext.enlargeExtent(extent, featureExtent);
+        // PARTS=1
+        shpView.setInt32(shpI + 36, 1, true);
+        // POINTS
+        shpView.setInt32(shpI + 40, coordinates.length, true);
+        // The only part - index zero
+        shpView.setInt32(shpI + 44, 0, true);
 
-        fileLength += byteLengthOfRecordInclHeader;
+        shpI += 48;
 
-        function writeCoordinate(pt) {
-            pointsArrayView.setFloat64(pointIdx * 16, pt[0], true);
-            pointsArrayView.setFloat64(pointIdx * 16 + 8, pt[1], true);
-            ext.enlarge(featureExtent, pt);
-        }
+        coordinates.forEach(function writeLine(coords, i) {
+            shpView.setFloat64(shpI, coords[0], true); // X
+            shpView.setFloat64(shpI + 8, coords[1], true); // Y
+            shpI += 16;
+        });
+
+        shxI += 8;
     }
-};
 
-function writeExtent(extent, view) {
-    view.setFloat64(12, extent.xmin, true);
-    view.setFloat64(20, extent.ymin, true);
-    view.setFloat64(28, extent.xmax, true);
-    view.setFloat64(36, extent.ymax, true);
-}
+    fileLength += totalLength;
+
+    function totalPoints(geometries) {
+        var sum = 0;
+        geometries.forEach(function(g) { sum += g.length; });
+        return sum;
+    }
+
+    return {
+        fileLength: fileLength,
+        shp: shpView,
+        shx: shxView
+    };
+};

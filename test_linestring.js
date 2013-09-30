@@ -1,31 +1,28 @@
 var write = require('./src/write').write,
     fs = require('fs');
 
-var points = [
+var points = [[
     [0, 0],
     [10, 0],
-    [10, 10],
-    [-10, 10],
-    [-10, -10]
-];
-
-var datas = [0, 1, 2, 3].map(function(_) { return { id: _ }; });
+    [15, 5],
+    [20, -5]
+]];
 
 write(
     // field definitions
     [{ name: 'id', type: 'N' }],
     // feature data
-    datas,
+    [{ id: 0 }],
     // geometry type
-    'POINT',
+    'POLYLINE',
     // geometries
     points,
     finish);
 
 function finish(err, files) {
-    fs.writeFileSync('points.shp', toBuffer(files.shp.buffer));
-    fs.writeFileSync('points.shx', toBuffer(files.shx.buffer));
-    fs.writeFileSync('points.dbf', files.dbf);
+    fs.writeFileSync('lines.shp', toBuffer(files.shp.buffer));
+    fs.writeFileSync('lines.shx', toBuffer(files.shx.buffer));
+    fs.writeFileSync('lines.dbf', files.dbf);
 }
 
 function toBuffer(ab) {

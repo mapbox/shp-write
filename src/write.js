@@ -1,10 +1,10 @@
 var types = require('./types'),
     dbf = require('dbf'),
-    writePoints = require('./points'),
     ext = require('./extent'),
     getFields = require('./fields'),
     assert = require('assert'),
-    writePolygons = require('./poly').writePolygons;
+    writePoints = require('./points'),
+    writePoly = require('./poly');
 
 var recordHeaderLength = 8;
 
@@ -25,6 +25,9 @@ function write(fields, rows, geometry_type, geometries, callback) {
 
     if (TYPE === 1) {
         data = writePoints(geometries, extent, fileLength);
+        fileLength = data.fileLength;
+    } else if (TYPE === 3 || TYPE === 5) {
+        data = writePoly(geometries, extent, fileLength, TYPE);
         fileLength = data.fileLength;
     }
 

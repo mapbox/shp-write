@@ -3,29 +3,37 @@ var ext = require('./extent');
 module.exports = function writePoints(coordinates, extent, fileLength) {
 
     var contentLength = 28, // 8 header, 20 content
-        shpBuffer = new ArrayBuffer(coordinates.length * 28),
+        shpBuffer = new ArrayBuffer(coordinates.length * contentLength),
         shpView = new DataView(shpBuffer),
         shxBuffer = new ArrayBuffer(coordinates.length * 8),
         shxView = new DataView(shxBuffer),
-        shpI, shxI;
+        shpI = 0, shxI = 0;
+
+    coordinates.forEach(function(coords) {
+        ext.enlarge(extent, coords);
+    });
 
     coordinates.forEach(writePoint);
 
     function writePoint(coords, i) {
-        ext.enlarge(extent, coords);
+        // HEADER
+        // 4 record number
+        // 4 content length in 16-bit words (20/2)
+        shpView.setInt32(shpI, i);
+        shpView.setInt32(shpI + 4, 10);
 
-        // write point index
-        shpView.setInt32(shpI + 0, i);
-        shpView.setInt32(shpI += 4, 10); shpI += 4;
+        // record
+        // (8 + 8) + 4 = 20 content length
+        shpView.setInt32(shpI + 8, 1, true); // POINT=1
+        shpView.setFloat64(shpI + 12, coords[0], true); // X
+        shpView.setFloat64(shpI + 20, coords[1], true); // Y
 
-        // write point coordinates
-        shpView.setInt32(shpI += 8, 1, true);
-        shpView.setFloat64(shpI += 12, coords[0], true);
-        shpView.setFloat64(shpI += 20, coords[1], true); shpI += 8;
+        // index
+        shxView.setInt32(shxI, fileLength / 2); // length in 16-bit words
+        shxView.setInt32(shxI + 4, 10);
 
-        shxView.setInt32(shxI + 0, fileLength / 2);
-        shxView.setInt32(shxI += 4, 10); shxI += 4;
-
+        shxI += 8;
+        shpI += contentLength;
         fileLength += contentLength;
     }
 
