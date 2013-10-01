@@ -1,5 +1,6 @@
 var types = require('./types'),
     dbf = require('dbf'),
+    prj = require('./prj'),
     ext = require('./extent'),
     getFields = require('./fields'),
     assert = require('assert'),
@@ -13,7 +14,6 @@ module.exports.write = write;
 function write(rows, geometry_type, geometries, callback) {
 
     var TYPE = types.geometries[geometry_type];
-    console.log(geometry_type);
     assert(TYPE, 'unknown geometry type');
 
     var shpHeader = getHeader(TYPE),
@@ -45,7 +45,8 @@ function write(rows, geometry_type, geometries, callback) {
     callback(null, {
         shp: shp,
         shx: shx,
-        dbf: dbfBuf
+        dbf: dbfBuf,
+        prj: prj
     });
 }
 

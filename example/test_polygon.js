@@ -1,17 +1,15 @@
 var write = require('../src/write').write,
     fs = require('fs');
 
-var points = [[
+var points = [[[
     [0, 0],
     [10, 0],
     [10, 10],
     [0, 10],
     [0, 0]
-]];
+]]];
 
 write(
-    // field definitions
-    [{ name: 'id', type: 'N' }],
     // feature data
     [{ id: 0 }],
     // geometry type
