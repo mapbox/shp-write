@@ -1,3 +1,5 @@
+[![Build Status](https://secure.travis-ci.org/mapbox/shp-write.png?branch=master)](http://travis-ci.org/mapbox/shp-write)
+
 # shp-write
 
 writes shapefiles in pure javascript. uses [dbf](https://github.com/tmcw/dbf)

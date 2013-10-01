@@ -1,28 +1,18 @@
 var expect = require('expect.js'),
-    write = require('../src/write').write;
+    fields = require('../src/fields');
 
-describe('write', function() {
+describe('fields', function() {
 
-    describe('point', function() {
-        it('point geometry', function(done) {
-            write(
-                // field definitions
-                [{ type: 'C', name: 'foo' }],
-                // feature data
-                [{ foo: 'bar' }],
-                // geometry type
-                'POINT',
-                // geometries
-                [[0, 0]],
-                finish);
+    describe('#obj', function() {
+        it('field types', function() {
+            expect(fields.obj({ foo: 'bar' }))
+                .to.eql([{ name: 'foo', type: 'C' }]);
 
-            function finish(err, files) {
-                expect(err).to.be.null;
-                expect(files.shp).to.be.ok;
-                expect(files.shx).to.be.ok;
-                expect(files.dbf).to.be.ok;
-                done();
-            }
+            expect(fields.obj({ foo: true }))
+                .to.eql([{ name: 'foo', type: 'L' }]);
+
+            expect(fields.obj({ foo: 10 }))
+                .to.eql([{ name: 'foo', type: 'N' }]);
         });
     });
 });

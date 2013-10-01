@@ -224,18 +224,6 @@ function combined(l) {
     return buffer;
 }
 
-function combine(a, b) {
-    var c = new ArrayBuffer(a.byteLength + b.byteLength),
-        d = new DataView(c);
-    for (var i = 0; i < a.byteLength; i++) {
-        d.setUint8(i, a.getUint8(i));
-    }
-    for (; i < a.byteLength + b.byteLength; i++) {
-        d.setUint8(i, b.getUint8(i - a.byteLength));
-    }
-    return d;
-}
-
 },{"./header":4,"./record":6,"__browserify_Buffer":39,"fs":37}],8:[function(require,module,exports){
 // private property
 var _keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
