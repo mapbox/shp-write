@@ -22,7 +22,7 @@
     "url": "https://github.com/tmcw/shp-write/issues"
   },
   "dependencies": {
-    "dbf": "0.0.2",
+    "dbf": "0.1.0",
     "jszip": "https://github.com/tmcw/jszip/archive/patch-1.tar.gz"
   },
   "devDependencies": {
