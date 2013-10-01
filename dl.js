@@ -10,18 +10,19 @@ shpWrite({
                 coordinates: [0, 0]
             },
             properties: {
-                name: 'Foo'
+                foo: 'bar'
             }
         },
         {
             type: 'Feature',
             geometry: {
-                type: 'Point',
-                coordinates: [0, 10]
+                type: 'Polygon',
+                coordinates:
+                    [[0, 0], [2, -10], [5, 10], [0,0]]
             },
             properties: {
-                name: 'Bar'
+                foo: 'blah'
             }
-        }
+        },
     ]
 });

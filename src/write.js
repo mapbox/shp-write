@@ -10,9 +10,10 @@ var recordHeaderLength = 8;
 
 module.exports.write = write;
 
-function write(fields, rows, geometry_type, geometries, callback) {
+function write(rows, geometry_type, geometries, callback) {
 
     var TYPE = types.geometries[geometry_type];
+    console.log(geometry_type);
     assert(TYPE, 'unknown geometry type');
 
     var shpHeader = getHeader(TYPE),
@@ -37,7 +38,7 @@ function write(fields, rows, geometry_type, geometries, callback) {
     shpHeader.view.setInt32(24, fileLength / 2);
     shxHeader.view.setInt32(24, (50 + geometries.length * 4));
 
-    var dbfBuf = dbf.writer(fields, rows);
+    var dbfBuf = dbf.structure(rows);
         shp = combine(shpHeader.view, data.shp),
         shx = combine(shxHeader.view, data.shx);
 

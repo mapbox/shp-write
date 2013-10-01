@@ -1,4 +1,4 @@
-var write = require('./src/write').write,
+var write = require('../src/write').write,
     fs = require('fs');
 
 var points = [
@@ -12,8 +12,6 @@ var points = [
 var datas = [0, 1, 2, 3].map(function(_) { return { id: _ }; });
 
 write(
-    // field definitions
-    [{ name: 'id', type: 'N' }],
     // feature data
     datas,
     // geometry type

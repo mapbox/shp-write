@@ -3,27 +3,27 @@ var write = require('./write').write,
     JSZip = require('jszip');
 
 module.exports = function(gj) {
-    var inferred = geojson(gj);
-    write(
-        // field definitions
-        inferred.fields,
-        // feature data
-        inferred.rows,
-        // geometry type
-        'POINT',
-        // geometries
-        inferred.geometries,
-        finish);
+    var zip = new JSZip(),
+        layers = zip.folder('layers');
 
-    function finish(err, files) {
-        var zip = new JSZip(),
-            points = zip.folder("points");
+    [geojson.point(gj), geojson.line(gj), geojson.polygon(gj)]
+        .forEach(function(l) {
+        if (l.geometries.length) {
+            write(
+                // field definitions
+                l.properties,
+                // geometry type
+                l.type,
+                // geometries
+                l.geometries,
+                function(err, files) {
+                    layers.file(l.type + '.shp', files.shp.buffer, { binary: true });
+                    layers.file(l.type + '.shx', files.shx.buffer, { binary: true });
+                    layers.file(l.type + '.dbf', files.dbf.buffer, { binary: true });
+                });
+        }
+    });
 
-        points.file('points.shp', files.shp.buffer, { binary: true });
-        points.file('points.shx', files.shx.buffer, { binary: true });
-        points.file('points.dbf', files.dbf, { binary: true });
-
-        var content = zip.generate();
-        location.href = "data:application/zip;base64," + content;
-    }
+    var content = zip.generate();
+    location.href = "data:application/zip;base64," + content;
 };

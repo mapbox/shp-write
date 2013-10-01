@@ -1,40 +1,11 @@
-;(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var shpWrite = require('./').download;
-
-shpWrite({
-    type: 'FeatureCollection',
-    features: [
-        {
-            type: 'Feature',
-            geometry: {
-                type: 'Point',
-                coordinates: [0, 0]
-            },
-            properties: {
-                foo: 'bar'
-            }
-        },
-        {
-            type: 'Feature',
-            geometry: {
-                type: 'Polygon',
-                coordinates:
-                    [[0, 0], [2, -10], [5, 10], [0,0]]
-            },
-            properties: {
-                foo: 'blah'
-            }
-        },
-    ]
-});
-
-},{"./":2}],2:[function(require,module,exports){
+(function(e){if("function"==typeof bootstrap)bootstrap("shpwrite",e);else if("object"==typeof exports)module.exports=e();else if("function"==typeof define&&define.amd)define(e);else if("undefined"!=typeof ses){if(!ses.ok())return;ses.makeShpwrite=e}else"undefined"!=typeof window?window.shpwrite=e():global.shpwrite=e()})(function(){var define,ses,bootstrap,module,exports;
+return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 module.exports.download = require('./src/download');
 
-},{"./src/download":27}],3:[function(require,module,exports){
+},{"./src/download":26}],2:[function(require,module,exports){
 module.exports.structure = require('./src/structure');
 
-},{"./src/structure":7}],4:[function(require,module,exports){
+},{"./src/structure":6}],3:[function(require,module,exports){
 var fieldSize = require('./fieldsize');
 
 var types = {
@@ -78,7 +49,7 @@ function bytesPer(fields) {
     return fields.reduce(function(memo, f) { return memo + f.size; }, 1);
 }
 
-},{"./fieldsize":5}],5:[function(require,module,exports){
+},{"./fieldsize":4}],4:[function(require,module,exports){
 module.exports = {
     // string
     C: 254,
@@ -96,7 +67,7 @@ module.exports = {
     B: 8,
 };
 
-},{}],6:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 module.exports.lpad = function lpad(str, len, char) {
     while (str.length < len) { str = char + str; } return str;
 };
@@ -112,7 +83,7 @@ module.exports.writeField = function writeField(view, fieldLength, str, offset) 
     return offset;
 };
 
-},{}],7:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 var fieldSize = require('./fieldsize'),
     lib = require('./lib'),
     fields = require('./fields');
@@ -209,7 +180,7 @@ module.exports = function structure(data) {
     return view;
 };
 
-},{"./fields":4,"./fieldsize":5,"./lib":6}],8:[function(require,module,exports){
+},{"./fields":3,"./fieldsize":4,"./lib":5}],7:[function(require,module,exports){
 // private property
 var _keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 
@@ -280,7 +251,7 @@ exports.decode = function(input, utf8) {
 
 };
 
-},{}],9:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 function CompressedObject() {
     this.compressedSize = 0;
     this.uncompressedSize = 0;
@@ -309,7 +280,7 @@ CompressedObject.prototype = {
 };
 module.exports = CompressedObject;
 
-},{}],10:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 exports.STORE = {
     magic: "\x00\x00",
     compress: function(content) {
@@ -323,7 +294,7 @@ exports.STORE = {
 };
 exports.DEFLATE = require('./flate');
 
-},{"./flate":14}],11:[function(require,module,exports){
+},{"./flate":13}],10:[function(require,module,exports){
 var utils = require('./utils');
 
 function DataReader(data) {
@@ -431,13 +402,13 @@ DataReader.prototype = {
 };
 module.exports = DataReader;
 
-},{"./utils":24}],12:[function(require,module,exports){
+},{"./utils":23}],11:[function(require,module,exports){
 exports.base64 = false;
 exports.binary = false;
 exports.dir = false;
 exports.date = null;
 exports.compression = null;
-},{}],13:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 var context = {};
 (function() {
 
@@ -1047,7 +1018,7 @@ module.exports = function(input) {
     return deflate.compress();
 };
 
-},{}],14:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 var USE_TYPEDARRAY = (typeof Uint8Array !== 'undefined') && (typeof Uint16Array !== 'undefined') && (typeof Uint32Array !== 'undefined');
 exports.magic = "\x08\x00";
 exports.uncompress = require('./inflate');
@@ -1055,7 +1026,7 @@ exports.uncompressInputType = USE_TYPEDARRAY ? "uint8array" : "array";
 exports.compress = require('./deflate');
 exports.compressInputType = USE_TYPEDARRAY ? "uint8array" : "array";
 
-},{"./deflate":13,"./inflate":15}],15:[function(require,module,exports){
+},{"./deflate":12,"./inflate":14}],14:[function(require,module,exports){
 var context = {};
 (function() {
 
@@ -1383,7 +1354,7 @@ module.exports = function(input) {
     return inflate.decompress();
 };
 
-},{}],16:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 /**
 
 JSZip - A Javascript class for generating and reading zip files
@@ -1445,7 +1416,7 @@ JSZip.base64 = require('./base64');
 JSZip.compressions = require('./compressions');
 module.exports = JSZip;
 
-},{"./base64":8,"./compressions":10,"./load":17,"./object":19,"./support":22,"./utils":24}],17:[function(require,module,exports){
+},{"./base64":7,"./compressions":9,"./load":16,"./object":18,"./support":21,"./utils":23}],16:[function(require,module,exports){
 var base64 = require('./base64');
 var ZipEntries = require('./zipEntries');
 module.exports = function(data, options) {
@@ -1470,7 +1441,7 @@ module.exports = function(data, options) {
     return this;
 };
 
-},{"./base64":8,"./zipEntries":25}],18:[function(require,module,exports){
+},{"./base64":7,"./zipEntries":24}],17:[function(require,module,exports){
 var Uint8ArrayReader = require('./uint8ArrayReader');
 
 function NodeBufferReader(data) {
@@ -1491,7 +1462,7 @@ NodeBufferReader.prototype.readData = function(size) {
 };
 module.exports = NodeBufferReader;
 
-},{"./uint8ArrayReader":23}],19:[function(require,module,exports){
+},{"./uint8ArrayReader":22}],18:[function(require,module,exports){
 var Buffer=require("__browserify_Buffer").Buffer;var support = require('./support');
 var utils = require('./utils');
 var signature = require('./signature');
@@ -2395,7 +2366,7 @@ var out = {
 };
 module.exports = out;
 
-},{"./base64":8,"./compressedObject":9,"./compressions":10,"./defaults":12,"./signature":20,"./support":22,"./utils":24,"__browserify_Buffer":38}],20:[function(require,module,exports){
+},{"./base64":7,"./compressedObject":8,"./compressions":9,"./defaults":11,"./signature":19,"./support":21,"./utils":23,"__browserify_Buffer":37}],19:[function(require,module,exports){
 exports.LOCAL_FILE_HEADER = "PK\x03\x04";
 exports.CENTRAL_FILE_HEADER = "PK\x01\x02";
 exports.CENTRAL_DIRECTORY_END = "PK\x05\x06";
@@ -2403,7 +2374,7 @@ exports.ZIP64_CENTRAL_DIRECTORY_LOCATOR = "PK\x06\x07";
 exports.ZIP64_CENTRAL_DIRECTORY_END = "PK\x06\x06";
 exports.DATA_DESCRIPTOR = "PK\x07\x08";
 
-},{}],21:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 var DataReader = require('./dataReader');
 var utils = require('./utils');
 
@@ -2439,7 +2410,7 @@ StringReader.prototype.readData = function(size) {
     return result;
 };
 module.exports = StringReader;
-},{"./dataReader":11,"./utils":24}],22:[function(require,module,exports){
+},{"./dataReader":10,"./utils":23}],21:[function(require,module,exports){
 var Buffer=require("__browserify_Buffer").Buffer;exports.base64 = true;
 exports.array = true;
 exports.string = true;
@@ -2472,7 +2443,7 @@ else {
     }
 }
 
-},{"__browserify_Buffer":38}],23:[function(require,module,exports){
+},{"__browserify_Buffer":37}],22:[function(require,module,exports){
 var DataReader = require('./dataReader');
 
 function Uint8ArrayReader(data) {
@@ -2515,7 +2486,7 @@ Uint8ArrayReader.prototype.readData = function(size) {
     return result;
 };
 module.exports = Uint8ArrayReader;
-},{"./dataReader":11}],24:[function(require,module,exports){
+},{"./dataReader":10}],23:[function(require,module,exports){
 var Buffer=require("__browserify_Buffer").Buffer;var support = require('./support');
 var compressions = require('./compressions');
 /**
@@ -2833,7 +2804,7 @@ exports.findCompression = function(compressionMethod) {
     return null;
 };
 
-},{"./compressions":10,"./support":22,"__browserify_Buffer":38}],25:[function(require,module,exports){
+},{"./compressions":9,"./support":21,"__browserify_Buffer":37}],24:[function(require,module,exports){
 var StringReader = require('./stringReader');
 var NodeBufferReader = require('./nodeBufferReader');
 var Uint8ArrayReader = require('./uint8ArrayReader');
@@ -3029,7 +3000,7 @@ ZipEntries.prototype = {
 };
 // }}} end of ZipEntries
 module.exports = ZipEntries;
-},{"./nodeBufferReader":18,"./signature":20,"./stringReader":21,"./support":22,"./uint8ArrayReader":23,"./utils":24,"./zipEntry":26}],26:[function(require,module,exports){
+},{"./nodeBufferReader":17,"./signature":19,"./stringReader":20,"./support":21,"./uint8ArrayReader":22,"./utils":23,"./zipEntry":25}],25:[function(require,module,exports){
 var StringReader = require('./stringReader');
 var utils = require('./utils');
 var CompressedObject = require('./compressedObject');
@@ -3252,7 +3223,7 @@ ZipEntry.prototype = {
 };
 module.exports = ZipEntry;
 
-},{"./compressedObject":9,"./object":19,"./stringReader":21,"./utils":24}],27:[function(require,module,exports){
+},{"./compressedObject":8,"./object":18,"./stringReader":20,"./utils":23}],26:[function(require,module,exports){
 var write = require('./write').write,
     geojson = require('./geojson'),
     JSZip = require('jszip');
@@ -3283,7 +3254,7 @@ module.exports = function(gj) {
     location.href = "data:application/zip;base64," + content;
 };
 
-},{"./geojson":30,"./write":34,"jszip":16}],28:[function(require,module,exports){
+},{"./geojson":29,"./write":33,"jszip":15}],27:[function(require,module,exports){
 module.exports.enlarge = function enlargeExtent(extent, pt) {
     if (pt[0] < extent.xmin) extent.xmin = pt[0];
     if (pt[0] > extent.xmax) extent.xmax = pt[0];
@@ -3307,7 +3278,7 @@ module.exports.blank = function() {
     };
 };
 
-},{}],29:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 var types = require('./types').jstypes;
 
 module.exports.geojson = geojson;
@@ -3337,7 +3308,7 @@ function obj(_) {
     return o;
 }
 
-},{"./types":33}],30:[function(require,module,exports){
+},{"./types":32}],29:[function(require,module,exports){
 module.exports.point = justType('Point', 'POINT');
 module.exports.line = justType('LineString', 'POLYLINE');
 module.exports.polygon = justType('Polygon', 'POLYGON');
@@ -3365,7 +3336,7 @@ function isType(t) {
     return function(f) { return f.geometry.type === t; };
 }
 
-},{}],31:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 var ext = require('./extent');
 
 module.exports = function writePoints(coordinates, extent, fileLength) {
@@ -3412,7 +3383,7 @@ module.exports = function writePoints(coordinates, extent, fileLength) {
     };
 };
 
-},{"./extent":28}],32:[function(require,module,exports){
+},{"./extent":27}],31:[function(require,module,exports){
 var ext = require('./extent');
 
 module.exports = function writePoly(geometries, extent, fileLength, TYPE) {
@@ -3496,7 +3467,7 @@ module.exports = function writePoly(geometries, extent, fileLength, TYPE) {
     };
 };
 
-},{"./extent":28}],33:[function(require,module,exports){
+},{"./extent":27}],32:[function(require,module,exports){
 module.exports.geometries = {
     NULL: 0,
     POINT: 1,
@@ -3514,7 +3485,7 @@ module.exports.geometries = {
     MULTIPATCH: 31,
 };
 
-},{}],34:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 var types = require('./types'),
     dbf = require('dbf'),
     ext = require('./extent'),
@@ -3593,7 +3564,7 @@ function writeExtent(extent, view) {
     view.setFloat64(60, extent.ymax, true);
 }
 
-},{"./extent":28,"./fields":29,"./points":31,"./poly":32,"./types":33,"assert":36,"dbf":3}],35:[function(require,module,exports){
+},{"./extent":27,"./fields":28,"./points":30,"./poly":31,"./types":32,"assert":35,"dbf":2}],34:[function(require,module,exports){
 
 
 //
@@ -3811,7 +3782,7 @@ if (typeof Object.getOwnPropertyDescriptor === 'function') {
   exports.getOwnPropertyDescriptor = valueObject;
 }
 
-},{}],36:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -4128,7 +4099,7 @@ assert.doesNotThrow = function(block, /*optional*/message) {
 };
 
 assert.ifError = function(err) { if (err) {throw err;}};
-},{"_shims":35,"util":37}],37:[function(require,module,exports){
+},{"_shims":34,"util":36}],36:[function(require,module,exports){
 var Buffer=require("__browserify_Buffer").Buffer;// Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -4669,7 +4640,7 @@ function hasOwnProperty(obj, prop) {
   return Object.prototype.hasOwnProperty.call(obj, prop);
 }
 
-},{"__browserify_Buffer":38,"_shims":35}],38:[function(require,module,exports){
+},{"__browserify_Buffer":37,"_shims":34}],37:[function(require,module,exports){
 require=(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 exports.readIEEE754 = function(buffer, offset, isBE, mLen, nBytes) {
   var e, m,
@@ -7050,4 +7021,6 @@ function hasOwnProperty(obj, prop) {
 ;;module.exports=require("buffer-browserify")
 
 },{}]},{},[1])
+(1)
+});
 ;

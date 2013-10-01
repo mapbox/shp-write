@@ -2,14 +2,19 @@
 
 # shp-write
 
-writes shapefiles in pure javascript. uses [dbf](https://github.com/tmcw/dbf)
-for the data.
+Writes shapefile in pure javascript. Uses [dbf](https://github.com/tmcw/dbf)
+for the data component, and [jsZIP](http://stuk.github.io/jszip/) to generate
+ZIP file downloads in-browser.
 
-## usage
+## Usage
 
 For node.js or [browserify](https://github.com/substack/node-browserify)
 
     npm install --save shp-write
+
+Or in a browser
+
+    wget https://raw.github.com/mapbox/shp-write/master/shpwrite.js
 
 ## Caveats
 
@@ -18,13 +23,13 @@ For node.js or [browserify](https://github.com/substack/node-browserify)
 * Geometries: Point, LineString, Polygon
 * Tabular-style properties export with Shapefile's field name length limit
 
-## example
+## Example
 
 ```js
-var downloadShp = require('shp-write').download;
+var shpwrite = require('shp-write');
 
 // a GeoJSON bridge for features
-downloadShp({
+shpwrite.download({
     type: 'FeatureCollection',
     features: [
         {
@@ -49,6 +54,28 @@ downloadShp({
         }
     ]
 });
+// triggers a download of a zip file with shapefiles contained within.
+```
+
+## API
+
+### `download(geojson)`
+
+Given a [GeoJSON](http://geojson.org/) FeatureCollection as an object,
+converts convertible features into Shapefiles and triggers a download.
+
+### `write(data, geometrytype, geometries, callback)`
+
+Given data, an array of objects for each row of data, geometry, the OGC standard
+geometry type (like `POINT`), geometries, a list of geometries as bare coordinate
+arrays, generate a shapfile and call the callback with `err` and an object with
+
+```js
+{
+    shp: DataView(),
+    shx: DataView(),
+    dbf: DataView()
+}
 ```
 
 ## Other Implementations
