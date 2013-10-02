@@ -10,8 +10,8 @@ module.exports.write = function writePoints(geometries, extent, shpView, shxView
 
     function writePolyLine(coordinates, i) {
 
-        var flattened = justCoords(coordinates);
-        var contentLength = (flattened.length * 16) + 48;
+        var flattened = justCoords(coordinates),
+            contentLength = (flattened.length * 16) + 48;
 
         var featureExtent = flattened.reduce(function(extent, c) {
             return ext.enlarge(extent, c);
@@ -26,7 +26,7 @@ module.exports.write = function writePoints(geometries, extent, shpView, shxView
         // HEADER
         // 4 record number
         // 4 content length in 16-bit words (20/2)
-        shpView.setInt32(shpI, i);
+        shpView.setInt32(shpI, i + 1);
         shpView.setInt32(shpI + 4, contentLength / 2);
         shpI += 8;
 
@@ -59,9 +59,7 @@ module.exports.write = function writePoints(geometries, extent, shpView, shxView
 };
 
 module.exports.shpLength = function(geometries) {
-    return 16 +
-        // feature headers
-        (geometries.length * 48) +
+    return (geometries.length * 56) +
         // points
         (justCoords(geometries).length * 16);
 };
@@ -82,19 +80,12 @@ function totalPoints(geometries) {
     return sum;
 }
 
-function points(coordinates) {
-    if (typeof coordinates[0] !== undefined &&
-        typeof coordinates[0][0] !== undefined) {
-        return coordinates[0];
-    } else {
-        return coordinates;
-    }
-}
-
 function justCoords(coords, l) {
     if (l === undefined) l = [];
     if (typeof coords[0][0] == 'object') {
-        return l.concat(justCoords(coords[0]));
+        return coords.reduce(function(memo, c) {
+            return memo.concat(justCoords(c));
+        }, l);
     } else {
         return coords;
     }

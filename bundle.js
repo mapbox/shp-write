@@ -2395,7 +2395,7 @@ var out = {
 };
 module.exports = out;
 
-},{"./base64":8,"./compressedObject":9,"./compressions":10,"./defaults":12,"./signature":20,"./support":22,"./utils":24,"__browserify_Buffer":38}],20:[function(require,module,exports){
+},{"./base64":8,"./compressedObject":9,"./compressions":10,"./defaults":12,"./signature":20,"./support":22,"./utils":24,"__browserify_Buffer":39}],20:[function(require,module,exports){
 exports.LOCAL_FILE_HEADER = "PK\x03\x04";
 exports.CENTRAL_FILE_HEADER = "PK\x01\x02";
 exports.CENTRAL_DIRECTORY_END = "PK\x05\x06";
@@ -2472,7 +2472,7 @@ else {
     }
 }
 
-},{"__browserify_Buffer":38}],23:[function(require,module,exports){
+},{"__browserify_Buffer":39}],23:[function(require,module,exports){
 var DataReader = require('./dataReader');
 
 function Uint8ArrayReader(data) {
@@ -2833,7 +2833,7 @@ exports.findCompression = function(compressionMethod) {
     return null;
 };
 
-},{"./compressions":10,"./support":22,"__browserify_Buffer":38}],25:[function(require,module,exports){
+},{"./compressions":10,"./support":22,"__browserify_Buffer":39}],25:[function(require,module,exports){
 var StringReader = require('./stringReader');
 var NodeBufferReader = require('./nodeBufferReader');
 var Uint8ArrayReader = require('./uint8ArrayReader');
@@ -3255,6 +3255,7 @@ module.exports = ZipEntry;
 },{"./compressedObject":9,"./object":19,"./stringReader":21,"./utils":24}],27:[function(require,module,exports){
 var write = require('./write').write,
     geojson = require('./geojson'),
+    prj = require('./prj'),
     JSZip = require('jszip');
 
 module.exports = function(gj) {
@@ -3275,6 +3276,7 @@ module.exports = function(gj) {
                     layers.file(l.type + '.shp', files.shp.buffer, { binary: true });
                     layers.file(l.type + '.shx', files.shx.buffer, { binary: true });
                     layers.file(l.type + '.dbf', files.dbf.buffer, { binary: true });
+                    layers.file(l.type + '.prj', prj);
                 });
         }
     });
@@ -3283,12 +3285,13 @@ module.exports = function(gj) {
     location.href = "data:application/zip;base64," + content;
 };
 
-},{"./geojson":30,"./write":34,"jszip":16}],28:[function(require,module,exports){
+},{"./geojson":30,"./prj":33,"./write":35,"jszip":16}],28:[function(require,module,exports){
 module.exports.enlarge = function enlargeExtent(extent, pt) {
     if (pt[0] < extent.xmin) extent.xmin = pt[0];
     if (pt[0] > extent.xmax) extent.xmax = pt[0];
     if (pt[1] < extent.ymin) extent.ymin = pt[1];
     if (pt[1] > extent.ymax) extent.ymax = pt[1];
+    return extent;
 };
 
 module.exports.enlargeExtent = function enlargeExtent(extent, ext) {
@@ -3296,6 +3299,7 @@ module.exports.enlargeExtent = function enlargeExtent(extent, ext) {
     if (ext.xmin < extent.xmin) extent.xmin = ext.xmin;
     if (ext.ymax > extent.ymax) extent.ymax = ext.ymax;
     if (ext.ymin < extent.ymin) extent.ymin = ext.ymin;
+    return extent;
 };
 
 module.exports.blank = function() {
@@ -3337,7 +3341,7 @@ function obj(_) {
     return o;
 }
 
-},{"./types":33}],30:[function(require,module,exports){
+},{"./types":34}],30:[function(require,module,exports){
 module.exports.point = justType('Point', 'POINT');
 module.exports.line = justType('LineString', 'POLYLINE');
 module.exports.polygon = justType('Polygon', 'POLYGON');
@@ -3354,7 +3358,13 @@ function justType(type, TYPE) {
 }
 
 function justCoords(t) {
-    return t.geometry.coordinates;
+    if (t.geometry.coordinates[0] !== undefined &&
+        t.geometry.coordinates[0][0] !== undefined &&
+        t.geometry.coordinates[0][0][0] !== undefined) {
+        return t.geometry.coordinates[0];
+    } else {
+        return t.geometry.coordinates;
+    }
 }
 
 function justProps(t) {
@@ -3368,22 +3378,14 @@ function isType(t) {
 },{}],31:[function(require,module,exports){
 var ext = require('./extent');
 
-module.exports = function writePoints(coordinates, extent, fileLength) {
+module.exports.write = function writePoints(coordinates, extent, shpView, shxView) {
 
     var contentLength = 28, // 8 header, 20 content
-        shpBuffer = new ArrayBuffer(coordinates.length * contentLength),
-        shpView = new DataView(shpBuffer),
-        shxBuffer = new ArrayBuffer(coordinates.length * 8),
-        shxView = new DataView(shxBuffer),
-        shpI = 0, shxI = 0;
+        fileLength = 100,
+        shpI = 0,
+        shxI = 0;
 
-    coordinates.forEach(function(coords) {
-        ext.enlarge(extent, coords);
-    });
-
-    coordinates.forEach(writePoint);
-
-    function writePoint(coords, i) {
+    coordinates.forEach(function writePoint(coords, i) {
         // HEADER
         // 4 record number
         // 4 content length in 16-bit words (20/2)
@@ -3403,60 +3405,58 @@ module.exports = function writePoints(coordinates, extent, fileLength) {
         shxI += 8;
         shpI += contentLength;
         fileLength += contentLength;
-    }
+    });
+};
 
-    return {
-        fileLength: fileLength,
-        shp: shpView,
-        shx: shxView
-    };
+module.exports.extent = function(coordinates) {
+    return coordinates.reduce(function(extent, coords) {
+        return ext.enlarge(extent, coords);
+    }, ext.blank());
+};
+
+module.exports.shxLength = function(coordinates) {
+    return coordinates.length * 8;
+};
+
+module.exports.shpLength = function(coordinates) {
+    return coordinates.length * 28;
 };
 
 },{"./extent":28}],32:[function(require,module,exports){
 var ext = require('./extent');
 
-module.exports = function writePoly(geometries, extent, fileLength, TYPE) {
+module.exports.write = function writePoints(geometries, extent, shpView, shxView, TYPE) {
 
-    var headerLength = 48,
-        totalLength =
-            // header
-            8 +
-            // feature headers
-            (geometries.length * headerLength) +
-            // points
-            (totalPoints(geometries) * 16),
-        shpBuffer = new ArrayBuffer(totalLength),
-        shpView = new DataView(shpBuffer),
-        shxBuffer = new ArrayBuffer(geometries.length * 8),
-        shxView = new DataView(shxBuffer),
-        shpI = 0, shxI = 0;
+    var shpI = 0,
+        shxI = 0,
+        fileLength = 100;
 
     geometries.forEach(writePolyLine);
 
     function writePolyLine(coordinates, i) {
 
-        var featureExtent = ext.blank(),
-            contentLength = (coordinates.length * 16) + 48;
+        var flattened = justCoords(coordinates),
+            contentLength = (flattened.length * 16) + 48;
 
-        coordinates.forEach(function(c) {
-            ext.enlarge(featureExtent, c);
-            ext.enlarge(extent, c);
-        });
+        var featureExtent = flattened.reduce(function(extent, c) {
+            return ext.enlarge(extent, c);
+        }, ext.blank());
 
-        // index
+        // INDEX
+        // offset
         shxView.setInt32(shxI, fileLength / 2); // length in 16-bit words
+        // offset length
         shxView.setInt32(shxI + 4, contentLength / 2);
 
         // HEADER
         // 4 record number
         // 4 content length in 16-bit words (20/2)
-        shpView.setInt32(shpI, i);
+        shpView.setInt32(shpI, i + 1);
         shpView.setInt32(shpI + 4, contentLength / 2);
-
         shpI += 8;
 
-        shpView.setInt32(shpI, TYPE, true); // POLYLINE=3
-
+        // POLYLINE=3
+        shpView.setInt32(shpI, TYPE, true);
         // EXTENT
         shpView.setFloat64(shpI + 4, featureExtent.xmin, true);
         shpView.setFloat64(shpI + 12, featureExtent.ymin, true);
@@ -3466,37 +3466,60 @@ module.exports = function writePoly(geometries, extent, fileLength, TYPE) {
         // PARTS=1
         shpView.setInt32(shpI + 36, 1, true);
         // POINTS
-        shpView.setInt32(shpI + 40, coordinates.length, true);
+        shpView.setInt32(shpI + 40, flattened.length, true);
         // The only part - index zero
         shpView.setInt32(shpI + 44, 0, true);
 
         shpI += 48;
 
-        coordinates.forEach(function writeLine(coords, i) {
+        flattened.forEach(function writeLine(coords, i) {
             shpView.setFloat64(shpI, coords[0], true); // X
             shpView.setFloat64(shpI + 8, coords[1], true); // Y
             shpI += 16;
         });
 
         shxI += 8;
+        fileLength += contentLength;
     }
-
-    fileLength += totalLength;
-
-    function totalPoints(geometries) {
-        var sum = 0;
-        geometries.forEach(function(g) { sum += g.length; });
-        return sum;
-    }
-
-    return {
-        fileLength: fileLength,
-        shp: shpView,
-        shx: shxView
-    };
 };
 
+module.exports.shpLength = function(geometries) {
+    return (geometries.length * 56) +
+        // points
+        (justCoords(geometries).length * 16);
+};
+
+module.exports.shxLength = function(geometries) {
+    return geometries.length * 8;
+};
+
+module.exports.extent = function(coordinates) {
+    return justCoords(coordinates).reduce(function(extent, c) {
+        return ext.enlarge(extent, c);
+    }, ext.blank());
+};
+
+function totalPoints(geometries) {
+    var sum = 0;
+    geometries.forEach(function(g) { sum += g.length; });
+    return sum;
+}
+
+function justCoords(coords, l) {
+    if (l === undefined) l = [];
+    if (typeof coords[0][0] == 'object') {
+        return coords.reduce(function(memo, c) {
+            return memo.concat(justCoords(c));
+        }, l);
+    } else {
+        return coords;
+    }
+}
+
 },{"./extent":28}],33:[function(require,module,exports){
+module.exports = 'GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137,298.257223563]],PRIMEM["Greenwich",0],UNIT["Degree",0.017453292519943295]]';
+
+},{}],34:[function(require,module,exports){
 module.exports.geometries = {
     NULL: 0,
     POINT: 1,
@@ -3514,76 +3537,66 @@ module.exports.geometries = {
     MULTIPATCH: 31,
 };
 
-},{}],34:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 var types = require('./types'),
     dbf = require('dbf'),
+    prj = require('./prj'),
     ext = require('./extent'),
     getFields = require('./fields'),
     assert = require('assert'),
-    writePoints = require('./points'),
-    writePoly = require('./poly');
+    pointWriter = require('./points'),
+    polyWriter = require('./poly');
+
+var writers = {
+    1: pointWriter,
+    5: polyWriter,
+    3: polyWriter
+};
 
 var recordHeaderLength = 8;
 
 module.exports.write = write;
 
+// Low-level writing interface
 function write(rows, geometry_type, geometries, callback) {
 
-    var TYPE = types.geometries[geometry_type];
-    console.log(geometry_type);
-    assert(TYPE, 'unknown geometry type');
+    var TYPE = types.geometries[geometry_type],
+        writer = writers[TYPE],
+        shpLength = 100 + writer.shpLength(geometries),
+        shxLength = 100 + writer.shxLength(geometries),
+        shpBuffer = new ArrayBuffer(shpLength),
+        shpView = new DataView(shpBuffer),
+        shxBuffer = new ArrayBuffer(shxLength),
+        shxView = new DataView(shxBuffer),
+        extent = writer.extent(geometries);
 
-    var shpHeader = getHeader(TYPE),
-        shxHeader = getHeader(TYPE),
-        extent = ext.blank(),
-        fileLength = 100,
-        byteShxLength = 100;
+    writeHeader(shpView, TYPE);
+    writeHeader(shxView, TYPE);
+    writeExtent(extent, shpView);
+    writeExtent(extent, shxView);
 
-    var data;
+    writer.write(geometries, extent,
+        new DataView(shpBuffer, 100),
+        new DataView(shxBuffer, 100),
+        TYPE);
 
-    if (TYPE === 1) {
-        data = writePoints(geometries, extent, fileLength);
-        fileLength = data.fileLength;
-    } else if (TYPE === 3 || TYPE === 5) {
-        data = writePoly(geometries, extent, fileLength, TYPE);
-        fileLength = data.fileLength;
-    }
-
-    writeExtent(extent, shpHeader.view);
-    writeExtent(extent, shxHeader.view);
-
-    shpHeader.view.setInt32(24, fileLength / 2);
-    shxHeader.view.setInt32(24, (50 + geometries.length * 4));
+    shpView.setInt32(24, shpLength / 2);
+    shxView.setInt32(24, (50 + geometries.length * 4));
 
     var dbfBuf = dbf.structure(rows);
-        shp = combine(shpHeader.view, data.shp),
-        shx = combine(shxHeader.view, data.shx);
 
     callback(null, {
-        shp: shp,
-        shx: shx,
-        dbf: dbfBuf
+        shp: shpView,
+        shx: shxView,
+        dbf: dbfBuf,
+        prj: prj
     });
 }
 
-function combine(a, b) {
-    var c = new ArrayBuffer(a.byteLength + b.byteLength),
-        d = new DataView(c);
-    for (var i = 0; i < a.byteLength; i++) {
-        d.setUint8(i, a.getUint8(i));
-    }
-    for (; i < a.byteLength + b.byteLength; i++) {
-        d.setUint8(i, b.getUint8(i - a.byteLength));
-    }
-    return d;
-}
-
-function getHeader(TYPE) {
-    var buf = new ArrayBuffer(100), view = new DataView(buf);
+function writeHeader(view, TYPE) {
     view.setInt32(0, 9994);
     view.setInt32(28, 1000, true);
     view.setInt32(32, TYPE, true);
-    return { view: view, buffer: buf };
 }
 
 function writeExtent(extent, view) {
@@ -3593,7 +3606,7 @@ function writeExtent(extent, view) {
     view.setFloat64(60, extent.ymax, true);
 }
 
-},{"./extent":28,"./fields":29,"./points":31,"./poly":32,"./types":33,"assert":36,"dbf":3}],35:[function(require,module,exports){
+},{"./extent":28,"./fields":29,"./points":31,"./poly":32,"./prj":33,"./types":34,"assert":37,"dbf":3}],36:[function(require,module,exports){
 
 
 //
@@ -3811,7 +3824,7 @@ if (typeof Object.getOwnPropertyDescriptor === 'function') {
   exports.getOwnPropertyDescriptor = valueObject;
 }
 
-},{}],36:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -4128,7 +4141,7 @@ assert.doesNotThrow = function(block, /*optional*/message) {
 };
 
 assert.ifError = function(err) { if (err) {throw err;}};
-},{"_shims":35,"util":37}],37:[function(require,module,exports){
+},{"_shims":36,"util":38}],38:[function(require,module,exports){
 var Buffer=require("__browserify_Buffer").Buffer;// Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -4669,7 +4682,7 @@ function hasOwnProperty(obj, prop) {
   return Object.prototype.hasOwnProperty.call(obj, prop);
 }
 
-},{"__browserify_Buffer":38,"_shims":35}],38:[function(require,module,exports){
+},{"__browserify_Buffer":39,"_shims":36}],39:[function(require,module,exports){
 require=(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 exports.readIEEE754 = function(buffer, offset, isBE, mLen, nBytes) {
   var e, m,
