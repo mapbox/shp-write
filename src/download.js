@@ -26,6 +26,6 @@ module.exports = function(gj) {
         }
     });
 
-    var content = zip.generate();
-    location.href = "data:application/zip;base64," + content;
+    var content = zip.generate({compression:'STORE'});
+    location.href = 'data:application/zip;base64,' + content;
 };
