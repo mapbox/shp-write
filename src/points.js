@@ -1,21 +1,13 @@
 var ext = require('./extent');
 
-module.exports = function writePoints(coordinates, extent, fileLength) {
+module.exports.write = function writePoints(coordinates, extent, shpView, shxView) {
 
     var contentLength = 28, // 8 header, 20 content
-        shpBuffer = new ArrayBuffer(coordinates.length * contentLength),
-        shpView = new DataView(shpBuffer),
-        shxBuffer = new ArrayBuffer(coordinates.length * 8),
-        shxView = new DataView(shxBuffer),
-        shpI = 0, shxI = 0;
+        fileLength = 100,
+        shpI = 0,
+        shxI = 0;
 
-    coordinates.forEach(function(coords) {
-        ext.enlarge(extent, coords);
-    });
-
-    coordinates.forEach(writePoint);
-
-    function writePoint(coords, i) {
+    coordinates.forEach(function writePoint(coords, i) {
         // HEADER
         // 4 record number
         // 4 content length in 16-bit words (20/2)
@@ -35,11 +27,19 @@ module.exports = function writePoints(coordinates, extent, fileLength) {
         shxI += 8;
         shpI += contentLength;
         fileLength += contentLength;
-    }
+    });
+};
 
-    return {
-        fileLength: fileLength,
-        shp: shpView,
-        shx: shxView
-    };
+module.exports.extent = function(coordinates) {
+    return coordinates.reduce(function(extent, coords) {
+        return ext.enlarge(extent, coords);
+    }, ext.blank());
+};
+
+module.exports.shxLength = function(coordinates) {
+    return coordinates.length * 8;
+};
+
+module.exports.shpLength = function(coordinates) {
+    return coordinates.length * 28;
 };

@@ -1,35 +1,23 @@
 var ext = require('./extent');
 
-module.exports = function writePoly(geometries, extent, fileLength, TYPE) {
+module.exports.write = function writePoints(geometries, extent, shpView, shxView, TYPE) {
 
-    var headerLength = 48,
-        totalLength =
-            // header
-            16 +
-            // feature headers
-            (geometries.length * headerLength) +
-            // points
-            (totalPoints(geometries) * 16),
-        shpBuffer = new ArrayBuffer(totalLength),
-        shpView = new DataView(shpBuffer),
-        shxBuffer = new ArrayBuffer(geometries.length * 8),
-        shxView = new DataView(shxBuffer),
-        shpI = 0, shxI = 0;
+    var shpI = 0,
+        shxI = 0,
+        fileLength = 100;
 
     geometries.forEach(writePolyLine);
 
     function writePolyLine(coordinates, i) {
 
-        var featureExtent = ext.blank(),
-            contentLength = (coordinates.length * 16) + 48;
+        var flattened = justCoords(coordinates);
+        var contentLength = (flattened.length * 16) + 48;
 
+        var featureExtent = flattened.reduce(function(extent, c) {
+            return ext.enlarge(extent, c);
+        }, ext.blank());
 
-        coordinates.forEach(function(c) {
-            ext.enlarge(featureExtent, c);
-            ext.enlarge(extent, c);
-        });
-
-        // index
+        // INDEX
         // offset
         shxView.setInt32(shxI, fileLength / 2); // length in 16-bit words
         // offset length
@@ -40,12 +28,10 @@ module.exports = function writePoly(geometries, extent, fileLength, TYPE) {
         // 4 content length in 16-bit words (20/2)
         shpView.setInt32(shpI, i);
         shpView.setInt32(shpI + 4, contentLength / 2);
-
-
         shpI += 8;
 
-        shpView.setInt32(shpI, TYPE, true); // POLYLINE=3
-
+        // POLYLINE=3
+        shpView.setInt32(shpI, TYPE, true);
         // EXTENT
         shpView.setFloat64(shpI + 4, featureExtent.xmin, true);
         shpView.setFloat64(shpI + 12, featureExtent.ymin, true);
@@ -55,33 +41,61 @@ module.exports = function writePoly(geometries, extent, fileLength, TYPE) {
         // PARTS=1
         shpView.setInt32(shpI + 36, 1, true);
         // POINTS
-        shpView.setInt32(shpI + 40, coordinates.length, true);
+        shpView.setInt32(shpI + 40, flattened.length, true);
         // The only part - index zero
         shpView.setInt32(shpI + 44, 0, true);
 
         shpI += 48;
 
-        coordinates.forEach(function writeLine(coords, i) {
+        flattened.forEach(function writeLine(coords, i) {
             shpView.setFloat64(shpI, coords[0], true); // X
             shpView.setFloat64(shpI + 8, coords[1], true); // Y
             shpI += 16;
         });
 
         shxI += 8;
-
         fileLength += contentLength;
     }
-
-
-    function totalPoints(geometries) {
-        var sum = 0;
-        geometries.forEach(function(g) { sum += g.length; });
-        return sum;
-    }
-
-    return {
-        fileLength: fileLength,
-        shp: shpView,
-        shx: shxView
-    };
 };
+
+module.exports.shpLength = function(geometries) {
+    return 16 +
+        // feature headers
+        (geometries.length * 48) +
+        // points
+        (justCoords(geometries).length * 16);
+};
+
+module.exports.shxLength = function(geometries) {
+    return geometries.length * 8;
+};
+
+module.exports.extent = function(coordinates) {
+    return justCoords(coordinates).reduce(function(extent, c) {
+        return ext.enlarge(extent, c);
+    }, ext.blank());
+};
+
+function totalPoints(geometries) {
+    var sum = 0;
+    geometries.forEach(function(g) { sum += g.length; });
+    return sum;
+}
+
+function points(coordinates) {
+    if (typeof coordinates[0] !== undefined &&
+        typeof coordinates[0][0] !== undefined) {
+        return coordinates[0];
+    } else {
+        return coordinates;
+    }
+}
+
+function justCoords(coords, l) {
+    if (l === undefined) l = [];
+    if (typeof coords[0][0] == 'object') {
+        return l.concat(justCoords(coords[0]));
+    } else {
+        return coords;
+    }
+}

@@ -9,8 +9,6 @@ var points = [[
 ]];
 
 write(
-    // field definitions
-    [{ name: 'id', type: 'N' }],
     // feature data
     [{ id: 0 }],
     // geometry type
