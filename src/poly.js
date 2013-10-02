@@ -4,7 +4,7 @@ module.exports.write = function writePoints(geometries, extent, shpView, shxView
 
     var shpI = 0,
         shxI = 0,
-        fileLength = 100;
+        shxOffset = 100;
 
     geometries.forEach(writePolyLine);
 
@@ -18,43 +18,30 @@ module.exports.write = function writePoints(geometries, extent, shpView, shxView
         }, ext.blank());
 
         // INDEX
-        // offset
-        shxView.setInt32(shxI, fileLength / 2); // length in 16-bit words
-        // offset length
-        shxView.setInt32(shxI + 4, contentLength / 2);
-
-        // HEADER
-        // 4 record number
-        // 4 content length in 16-bit words (20/2)
-        shpView.setInt32(shpI, i + 1);
-        shpView.setInt32(shpI + 4, contentLength / 2);
-        shpI += 8;
-
-        // POLYLINE=3
-        shpView.setInt32(shpI, TYPE, true);
-        // EXTENT
-        shpView.setFloat64(shpI + 4, featureExtent.xmin, true);
-        shpView.setFloat64(shpI + 12, featureExtent.ymin, true);
-        shpView.setFloat64(shpI + 20, featureExtent.xmax, true);
-        shpView.setFloat64(shpI + 28, featureExtent.ymax, true);
-
-        // PARTS=1
-        shpView.setInt32(shpI + 36, 1, true);
-        // POINTS
-        shpView.setInt32(shpI + 40, flattened.length, true);
-        // The only part - index zero
-        shpView.setInt32(shpI + 44, 0, true);
-
-        shpI += 48;
-
-        flattened.forEach(function writeLine(coords, i) {
-            shpView.setFloat64(shpI, coords[0], true); // X
-            shpView.setFloat64(shpI + 8, coords[1], true); // Y
-            shpI += 16;
-        });
+        shxView.setInt32(shxI, shxOffset / 2); // offset
+        shxView.setInt32(shxI + 4, contentLength / 2); // offset length
 
         shxI += 8;
-        fileLength += contentLength;
+        shxOffset += contentLength;
+
+        shpView.setInt32(shpI, i + 1); // record number
+        shpView.setInt32(shpI + 4, contentLength / 2); // length
+        shpView.setInt32(shpI + 8, TYPE, true); // POLYLINE=3
+        shpView.setFloat64(shpI + 12, featureExtent.xmin, true); // EXTENT
+        shpView.setFloat64(shpI + 20, featureExtent.ymin, true);
+        shpView.setFloat64(shpI + 28, featureExtent.xmax, true);
+        shpView.setFloat64(shpI + 36, featureExtent.ymax, true);
+        shpView.setInt32(shpI + 44, 1, true); // PARTS=1
+        shpView.setInt32(shpI + 48, flattened.length, true); // POINTS
+        shpView.setInt32(shpI + 52, 0, true); // The only part - index zero
+        console.log(shpI + 52);
+
+        flattened.forEach(function writeLine(coords, i) {
+            shpView.setFloat64(shpI + 56 + (i * 16), coords[0], true); // X
+            shpView.setFloat64(shpI + 56 + (i * 16) + 8, coords[1], true); // Y
+        });
+
+        shpI += contentLength;
     }
 };
 
