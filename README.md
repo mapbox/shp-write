@@ -22,6 +22,7 @@ Or in a browser
   support
 * Geometries: Point, LineString, Polygon
 * Tabular-style properties export with Shapefile's field name length limit
+* Uses jsZip for ZIP files, but [compression is buggy](https://github.com/Stuk/jszip/issues/53) so it uses STORE instead of DEFLATE.
 
 ## Example
 
