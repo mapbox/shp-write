@@ -15,7 +15,7 @@ var writers = {
 
 var recordHeaderLength = 8;
 
-module.exports.write = write;
+module.exports = write;
 
 // Low-level writing interface
 function write(rows, geometry_type, geometries, callback) {
