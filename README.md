@@ -86,3 +86,7 @@ arrays, generate a shapfile and call the callback with `err` and an object with
 ## Reference
 
 * http://www.esri.com/library/whitepapers/pdfs/shapefile.pdf
+
+## Contributors
+
+* Nick Baugh <niftylettuce@gmail.com>

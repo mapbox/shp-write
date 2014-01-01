@@ -1,6 +1,6 @@
 {
   "name": "shp-write",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "write shapefiles from pure javascript",
   "main": "index.js",
   "scripts": {
@@ -17,6 +17,12 @@
     "js"
   ],
   "author": "Tom MacWright",
+  "contributors": [
+    {
+      "name": "Nick Baugh",
+      "email": "niftylettuce@gmail.com"
+    }
+  ],
   "license": "BSD-2-Clause",
   "bugs": {
     "url": "https://github.com/tmcw/shp-write/issues"
