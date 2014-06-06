@@ -2410,8 +2410,8 @@ process.chdir = function (dir) {
 },{}],9:[function(_dereq_,module,exports){
 module.exports.download = _dereq_('./src/download')
 module.exports.write = _dereq_('./src/write')
-
-},{"./src/download":34,"./src/write":42}],10:[function(_dereq_,module,exports){
+module.exports.zip = _dereq_('./src/zip')
+},{"./src/download":34,"./src/write":42,"./src/zip":43}],10:[function(_dereq_,module,exports){
 module.exports.structure = _dereq_('./src/structure');
 
 },{"./src/structure":14}],11:[function(_dereq_,module,exports){
@@ -5639,39 +5639,14 @@ ZipEntry.prototype = {
 module.exports = ZipEntry;
 
 },{"./compressedObject":16,"./object":26,"./stringReader":28,"./utils":31}],34:[function(_dereq_,module,exports){
-var write = _dereq_('./write'),
-    geojson = _dereq_('./geojson'),
-    prj = _dereq_('./prj'),
-    JSZip = _dereq_('jszip');
+var zip = _dereq_('./zip');
 
 module.exports = function(gj) {
-    var zip = new JSZip(),
-        layers = zip.folder('layers');
-
-    [geojson.point(gj), geojson.line(gj), geojson.polygon(gj)]
-        .forEach(function(l) {
-        if (l.geometries.length) {
-            write(
-                // field definitions
-                l.properties,
-                // geometry type
-                l.type,
-                // geometries
-                l.geometries,
-                function(err, files) {
-                    layers.file(l.type + '.shp', files.shp.buffer, { binary: true });
-                    layers.file(l.type + '.shx', files.shx.buffer, { binary: true });
-                    layers.file(l.type + '.dbf', files.dbf.buffer, { binary: true });
-                    layers.file(l.type + '.prj', prj);
-                });
-        }
-    });
-
-    var content = zip.generate({compression:'STORE'});
+    var content = zip(gj);
     location.href = 'data:application/zip;base64,' + content;
 };
 
-},{"./geojson":37,"./prj":40,"./write":42,"jszip":23}],35:[function(_dereq_,module,exports){
+},{"./zip":43}],35:[function(_dereq_,module,exports){
 module.exports.enlarge = function enlargeExtent(extent, pt) {
     if (pt[0] < extent.xmin) extent.xmin = pt[0];
     if (pt[0] > extent.xmax) extent.xmax = pt[0];
@@ -5979,6 +5954,38 @@ function writeExtent(extent, view) {
     view.setFloat64(60, extent.ymax, true);
 }
 
-},{"./extent":35,"./fields":36,"./points":38,"./poly":39,"./prj":40,"./types":41,"assert":1,"dbf":10}]},{},[9])
+},{"./extent":35,"./fields":36,"./points":38,"./poly":39,"./prj":40,"./types":41,"assert":1,"dbf":10}],43:[function(_dereq_,module,exports){
+var write = _dereq_('./write'),
+    geojson = _dereq_('./geojson'),
+    prj = _dereq_('./prj'),
+    JSZip = _dereq_('jszip');
+
+module.exports = function(gj) {
+    var zip = new JSZip(),
+        layers = zip.folder('layers');
+
+    [geojson.point(gj), geojson.line(gj), geojson.polygon(gj)]
+        .forEach(function(l) {
+        if (l.geometries.length) {
+            write(
+                // field definitions
+                l.properties,
+                // geometry type
+                l.type,
+                // geometries
+                l.geometries,
+                function(err, files) {
+                    layers.file(l.type + '.shp', files.shp.buffer, { binary: true });
+                    layers.file(l.type + '.shx', files.shx.buffer, { binary: true });
+                    layers.file(l.type + '.dbf', files.dbf.buffer, { binary: true });
+                    layers.file(l.type + '.prj', prj);
+                });
+        }
+    });
+
+    return zip.generate({compression:'STORE'});
+};
+
+},{"./geojson":37,"./prj":40,"./write":42,"jszip":23}]},{},[9])
 (9)
 });
