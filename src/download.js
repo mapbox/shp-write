@@ -1,4 +1,4 @@
-var write = require('./write').write,
+var write = require('./write'),
     geojson = require('./geojson'),
     prj = require('./prj'),
     JSZip = require('jszip');

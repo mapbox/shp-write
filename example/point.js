@@ -1,4 +1,4 @@
-var write = require('../src/write').write,
+var write = require('../src/write'),
     fs = require('fs');
 
 var points = [
