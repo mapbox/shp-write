@@ -79,6 +79,11 @@ arrays, generate a shapfile and call the callback with `err` and an object with
 }
 ```
 
+### `zip(geojson)`
+
+Generate a ArrayBuffer of a zipped shapefile, dbf, and prj, from a GeoJSON
+object.
+
 ## Other Implementations
 
 * https://code.google.com/p/pyshp/
