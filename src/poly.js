@@ -34,7 +34,6 @@ module.exports.write = function writePoints(geometries, extent, shpView, shxView
         shpView.setInt32(shpI + 44, 1, true); // PARTS=1
         shpView.setInt32(shpI + 48, flattened.length, true); // POINTS
         shpView.setInt32(shpI + 52, 0, true); // The only part - index zero
-        console.log(shpI + 52);
 
         flattened.forEach(function writeLine(coords, i) {
             shpView.setFloat64(shpI + 56 + (i * 16), coords[0], true); // X
