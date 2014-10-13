@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "dbf": "0.1.0",
-    "jszip": "https://github.com/tmcw/jszip/archive/patch-1.tar.gz"
+    "jszip": "2.4.0"
   },
   "devDependencies": {
     "expect.js": "~0.2.0",
