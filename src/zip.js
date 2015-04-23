@@ -19,7 +19,7 @@ module.exports = function(gj, options) {
                 // geometries
                 l.geometries,
                 function(err, files) {
-                    var fileName = options && options.types[l.type] ? options.types[l.type] : l.type;
+                    var fileName = options && options.types[l.type.toLowerCase()] ? options.types[l.type.toLowerCase()] : l.type;
                     layers.file(fileName + '.shp', files.shp.buffer, { binary: true });
                     layers.file(fileName + '.shx', files.shx.buffer, { binary: true });
                     layers.file(fileName + '.dbf', files.dbf.buffer, { binary: true });
