@@ -29,6 +29,15 @@ Or in a browser
 ```js
 var shpwrite = require('shp-write');
 
+// (optional) set names for feature types and zipped folder
+var options = {
+    folder: 'myshapes',
+    types: {
+        point: 'mypoints',
+        polygon: 'mypolygons',
+        line: 'mylines'
+    }
+}
 // a GeoJSON bridge for features
 shpwrite.download({
     type: 'FeatureCollection',
@@ -54,7 +63,7 @@ shpwrite.download({
             }
         }
     ]
-});
+}, options);
 // triggers a download of a zip file with shapefiles contained within.
 ```
 
