@@ -3,9 +3,10 @@ var write = require('./write'),
     prj = require('./prj'),
     JSZip = require('jszip');
 
-module.exports = function(gj) {
+module.exports = function(gj, options) {
+    
     var zip = new JSZip(),
-        layers = zip.folder('layers');
+        layers = zip.folder(options && options.folder ? options.folder : 'layers');
 
     [geojson.point(gj), geojson.line(gj), geojson.polygon(gj)]
         .forEach(function(l) {
@@ -18,10 +19,11 @@ module.exports = function(gj) {
                 // geometries
                 l.geometries,
                 function(err, files) {
-                    layers.file(l.type + '.shp', files.shp.buffer, { binary: true });
-                    layers.file(l.type + '.shx', files.shx.buffer, { binary: true });
-                    layers.file(l.type + '.dbf', files.dbf.buffer, { binary: true });
-                    layers.file(l.type + '.prj', prj);
+                    var fileName = options && options.types[l.type.toLowerCase()] ? options.types[l.type.toLowerCase()] : l.type;
+                    layers.file(fileName + '.shp', files.shp.buffer, { binary: true });
+                    layers.file(fileName + '.shx', files.shx.buffer, { binary: true });
+                    layers.file(fileName + '.dbf', files.dbf.buffer, { binary: true });
+                    layers.file(fileName + '.prj', prj);
                 });
         }
     });
