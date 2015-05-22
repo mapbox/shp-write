@@ -3919,7 +3919,7 @@ var getBinaryData = function(file) {
             // unicode text !
             // unicode string => binary string is a painful process, check if we can avoid it.
             if (support.uint8array && typeof TextEncoder === "function") {
-                return TextEncoder("utf-8").encode(result);
+                return new TextEncoder("utf-8").encode(result);
             }
             if (support.nodebuffer) {
                 return new Buffer(result, "utf-8");
@@ -4691,7 +4691,7 @@ var out = {
         // http://jsperf.com/utf8encode-vs-textencoder
         // On short strings (file names for example), the TextEncoder API is (currently) slower.
         if (support.uint8array && typeof TextEncoder === "function") {
-            var u8 = TextEncoder("utf-8").encode(string);
+            var u8 = new TextEncoder("utf-8").encode(string);
             return utils.transformTo("string", u8);
         }
         if (support.nodebuffer) {
