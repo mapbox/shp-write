@@ -2435,7 +2435,9 @@ function multi(features) {
 }
 
 function inherit(a, b) {
-    for (var i in b) { a[i] = b[i]; }
+    for (var i in b) {
+        if (b[i] !== null) a[i] = b[i];
+    }
     return a;
 }
 
@@ -2444,11 +2446,12 @@ function obj(_) {
     for (var p in _) fields[p] = typeof _[p];
     for (var n in fields) {
         var t = types[fields[n]];
-        o.push({
+        var f_meta = {
             name: n,
             type: t,
             size: fieldSize[t]
-        });
+        }
+        o.push(f_meta);
     }
     return o;
 }
@@ -2497,9 +2500,9 @@ var fieldSize = _dereq_('./fieldsize'),
     lib = _dereq_('./lib'),
     fields = _dereq_('./fields');
 
-module.exports = function structure(data) {
+module.exports = function structure(data, meta) {
 
-    var field_meta = fields.multi(data),
+    var field_meta = meta || fields.multi(data),
         fieldDescLength = (32 * field_meta.length) + 1,
         bytesPerRecord = fields.bytesPer(field_meta), // deleted flag
         buffer = new ArrayBuffer(
@@ -2508,13 +2511,15 @@ module.exports = function structure(data) {
             // header
             32 +
             // contents
-            (bytesPerRecord * data.length)
-        ),
+            (bytesPerRecord * data.length) +
+            // EOF marker
+            1
+    ),
         now = new Date(),
         view = new DataView(buffer);
 
-    // version number
-    view.setUint8(0, 3);
+    // version number - dBase III
+    view.setUint8(0, 0x03);
     // date of last update
     view.setUint8(1, now.getFullYear() - 1900);
     view.setUint8(2, now.getMonth());
@@ -2528,7 +2533,8 @@ module.exports = function structure(data) {
     // length of each record
     view.setUint16(10, bytesPerRecord, true);
 
-    view.setInt8(fieldDescLength - 1, 13);
+    // Terminator
+    view.setInt8(32 + fieldDescLength - 1, 0x0D);
 
     field_meta.forEach(function(f, i) {
         // field name
@@ -2549,7 +2555,8 @@ module.exports = function structure(data) {
         view.setUint8(offset, 32);
         offset++;
         field_meta.forEach(function(f) {
-            var val = row[f.name] || 0;
+            var val = row[f.name];
+            if (val === null || typeof val === 'undefined') val = '';
 
             switch (f.type) {
                 // boolean
@@ -2558,7 +2565,7 @@ module.exports = function structure(data) {
                     offset++;
                     break;
 
-                // decimal
+                // date
                 case 'D':
                     offset = lib.writeField(view, 8,
                         lib.lpad(val.toString(), 8, ' '), offset);
@@ -2584,7 +2591,7 @@ module.exports = function structure(data) {
     });
 
     // EOF flag
-    view.setUint8(offset - 1, 26);
+    view.setUint8(offset, 0x1A);
 
     return view;
 };
@@ -5641,9 +5648,12 @@ module.exports = ZipEntry;
 },{"./compressedObject":16,"./object":26,"./stringReader":28,"./utils":31}],34:[function(_dereq_,module,exports){
 var zip = _dereq_('./zip');
 
-module.exports = function(gj) {
-    var content = zip(gj);
-    location.href = 'data:application/zip;base64,' + content;
+module.exports = function(gj, options) {
+    var content = zip(gj, options);
+    var link = document.createElement('a');
+    link.download = options.filename;
+    link.href = 'data:application/zip;base64,' + content;
+    link.click();
 };
 
 },{"./zip":43}],35:[function(_dereq_,module,exports){
@@ -5820,7 +5830,7 @@ module.exports.write = function writePoints(geometries, extent, shpView, shxView
         shpView.setInt32(shpI + 44, 1, true); // PARTS=1
         shpView.setInt32(shpI + 48, flattened.length, true); // POINTS
         shpView.setInt32(shpI + 52, 0, true); // The only part - index zero
-        console.log(shpI + 52);
+        //console.log(shpI + 52);
 
         flattened.forEach(function writeLine(coords, i) {
             shpView.setFloat64(shpI + 56 + (i * 16), coords[0], true); // X
@@ -5960,9 +5970,9 @@ var write = _dereq_('./write'),
     prj = _dereq_('./prj'),
     JSZip = _dereq_('jszip');
 
-module.exports = function(gj) {
-    var zip = new JSZip(),
-        layers = zip.folder('layers');
+module.exports = function(gj, options) {
+
+    var zip = new JSZip();
 
     [geojson.point(gj), geojson.line(gj), geojson.polygon(gj)]
         .forEach(function(l) {
@@ -5975,10 +5985,10 @@ module.exports = function(gj) {
                 // geometries
                 l.geometries,
                 function(err, files) {
-                    layers.file(l.type + '.shp', files.shp.buffer, { binary: true });
-                    layers.file(l.type + '.shx', files.shx.buffer, { binary: true });
-                    layers.file(l.type + '.dbf', files.dbf.buffer, { binary: true });
-                    layers.file(l.type + '.prj', prj);
+                    zip.file(options.filename + '.shp', files.shp.buffer, { binary: true });
+                    zip.file(options.filename + '.shx', files.shx.buffer, { binary: true });
+                    zip.file(options.filename + '.dbf', files.dbf.buffer, { binary: true });
+                    zip.file(options.filename + '.prj', prj);
                 });
         }
     });
