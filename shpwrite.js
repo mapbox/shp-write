@@ -5818,7 +5818,7 @@ module.exports.write = function writePoints(geometries, extent, shpView, shxView
         shxView.setInt32(shxI + 4, contentLength / 2); // offset length
 
         shxI += 8;
-        shxOffset += contentLength;
+        shxOffset += contentLength+8;
 
         shpView.setInt32(shpI, i + 1); // record number
         shpView.setInt32(shpI + 4, contentLength / 2); // length
@@ -5837,7 +5837,7 @@ module.exports.write = function writePoints(geometries, extent, shpView, shxView
             shpView.setFloat64(shpI + 56 + (i * 16) + 8, coords[1], true); // Y
         });
 
-        shpI += contentLength;
+        shpI += contentLength+8;
     }
 };
 
