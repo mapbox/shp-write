@@ -40,7 +40,7 @@ module.exports.write = function writePoints(geometries, extent, shpView, shxView
             shpView.setFloat64(shpI + 56 + (i * 16) + 8, coords[1], true); // Y
         });
 
-        shpI += contentLength;
+        shpI += contentLength + 8;
     }
 };
 
