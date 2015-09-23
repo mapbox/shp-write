@@ -23,7 +23,7 @@ write(
 function finish(err, files) {
     fs.writeFileSync('points.shp', toBuffer(files.shp.buffer));
     fs.writeFileSync('points.shx', toBuffer(files.shx.buffer));
-    fs.writeFileSync('points.dbf', files.dbf);
+    fs.writeFileSync('points.dbf', toBuffer(files.dbf.buffer));
 }
 
 function toBuffer(ab) {

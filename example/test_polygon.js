@@ -21,7 +21,7 @@ write(
 function finish(err, files) {
     fs.writeFileSync('polygon.shp', toBuffer(files.shp.buffer));
     fs.writeFileSync('polygon.shx', toBuffer(files.shx.buffer));
-    fs.writeFileSync('polygon.dbf', files.dbf);
+    fs.writeFileSync('polygon.dbf', toBuffer(files.dbf.buffer));
 }
 
 function toBuffer(ab) {
