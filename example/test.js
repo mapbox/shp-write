@@ -9,7 +9,7 @@ var points = [
     [-10, -10]
 ];
 
-var datas = [0, 1, 2, 3].map(function(_) { return { id: _ }; });
+var datas = [0, 1, 2, 3, 4].map(function(_) { return { id: _ }; });
 
 write(
     // feature data
