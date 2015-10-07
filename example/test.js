@@ -9,7 +9,7 @@ var points = [
     [-10, -10]
 ];
 
-var datas = [0, 1, 2, 3].map(function(_) { return { id: _ }; });
+var datas = [0, 1, 2, 3, 4].map(function(_) { return { id: _ }; });
 
 write(
     // feature data
@@ -23,7 +23,7 @@ write(
 function finish(err, files) {
     fs.writeFileSync('points.shp', toBuffer(files.shp.buffer));
     fs.writeFileSync('points.shx', toBuffer(files.shx.buffer));
-    fs.writeFileSync('points.dbf', files.dbf);
+    fs.writeFileSync('points.dbf', toBuffer(files.dbf.buffer));
 }
 
 function toBuffer(ab) {
