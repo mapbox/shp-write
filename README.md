@@ -1,4 +1,4 @@
-[![Build Status](https://secure.travis-ci.org/mapbox/shp-write.png?branch=master)](http://travis-ci.org/mapbox/shp-write)
+[![Build Status](https://secure.travis-ci.org/mapbox/shp-write.svg?branch=master)](http://travis-ci.org/mapbox/shp-write)
 
 # shp-write
 
