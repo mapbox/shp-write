@@ -33,6 +33,7 @@
     "jszip": "2.5.0"
   },
   "devDependencies": {
+    "browserify": "^13.0.0",
     "expect.js": "~0.3.1",
     "mocha": "~2.4.5"
   }
