@@ -37,11 +37,19 @@ module.exports.write = function writePoints(geometries, extent, shpView, shxView
         shpView.setInt32(shpI + 48, flattened.length, true); // POINTS
         shpView.setInt32(shpI + 52, 0, true); // The first part - index zero
 
+        var onlyParts = coordinates.reduce(function (arr, coords) {
+            if (Array.isArray(coords[0][0])) {
+                arr = arr.concat(coords);
+            } else {
+                arr.push(coords);
+            }
+            return arr;
+        }, []);
         for (var p = 1; p < noParts; p++) {
             shpView.setInt32( // set part index
                 shpI + 52 + (p * 4),
-                coordinates.reduce(function (a, b, idx) {
-                    return idx < p ? a + (Array.isArray(b[0][0]) ? b[0].length : b.length) : a;
+                onlyParts.reduce(function (a, b, idx) {
+                    return idx < p ? a + b.length : a;
                 }, 0),
                 true
             );
