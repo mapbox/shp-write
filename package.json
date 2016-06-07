@@ -12,6 +12,11 @@
     "type": "git",
     "url": "git://github.com/mapbox/shp-write.git"
   },
+  "files": [
+    "index.js",
+    "src",
+    "shpwrite.js"
+  ],
   "keywords": [
     "shapefile",
     "write",
