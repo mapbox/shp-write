@@ -14,7 +14,7 @@ For node.js or [browserify](https://github.com/substack/node-browserify)
 
 Or in a browser
 
-    https://npmcdn.com/shp-write@latest/shpwrite.js
+    https://unpkg.com/shp-write@latest/shpwrite.js
 
 ## Caveats
 
