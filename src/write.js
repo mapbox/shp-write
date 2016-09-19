@@ -22,7 +22,8 @@ function write(rows, geometry_type, geometries, callback) {
 
     var TYPE = types.geometries[geometry_type],
         writer = writers[TYPE],
-        shpLength = 100 + writer.shpLength(geometries),
+        parts = writer.parts(geometries, TYPE),
+        shpLength = 100 + (parts - geometries.length) * 4 + writer.shpLength(geometries),
         shxLength = 100 + writer.shxLength(geometries),
         shpBuffer = new ArrayBuffer(shpLength),
         shpView = new DataView(shpBuffer),
