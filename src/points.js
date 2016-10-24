@@ -36,6 +36,10 @@ module.exports.extent = function(coordinates) {
     }, ext.blank());
 };
 
+module.exports.parts = function parts(geometries, TYPE) {
+    return geometries.length;
+};
+
 module.exports.shxLength = function(coordinates) {
     return coordinates.length * 8;
 };
