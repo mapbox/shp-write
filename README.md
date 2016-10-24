@@ -1,4 +1,4 @@
-[![Build Status](https://secure.travis-ci.org/mapbox/shp-write.png?branch=master)](http://travis-ci.org/mapbox/shp-write)
+[![Build Status](https://secure.travis-ci.org/mapbox/shp-write.svg?branch=master)](http://travis-ci.org/mapbox/shp-write)
 
 # shp-write
 
@@ -14,7 +14,7 @@ For node.js or [browserify](https://github.com/substack/node-browserify)
 
 Or in a browser
 
-    wget https://raw.github.com/mapbox/shp-write/master/shpwrite.js
+    https://unpkg.com/shp-write@latest/shpwrite.js
 
 ## Caveats
 

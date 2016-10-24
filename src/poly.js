@@ -1,4 +1,5 @@
-var ext = require('./extent');
+var ext = require('./extent'),
+    types = require('./types');
 
 module.exports.write = function writePoints(geometries, extent, shpView, shxView, TYPE) {
 
@@ -11,7 +12,8 @@ module.exports.write = function writePoints(geometries, extent, shpView, shxView
     function writePolyLine(coordinates, i) {
 
         var flattened = justCoords(coordinates),
-            contentLength = (flattened.length * 16) + 48;
+            noParts = parts([coordinates], TYPE),
+            contentLength = (flattened.length * 16) + 48 + (noParts - 1) * 4;
 
         var featureExtent = flattened.reduce(function(extent, c) {
             return ext.enlarge(extent, c);
@@ -22,7 +24,7 @@ module.exports.write = function writePoints(geometries, extent, shpView, shxView
         shxView.setInt32(shxI + 4, contentLength / 2); // offset length
 
         shxI += 8;
-        shxOffset += contentLength;
+        shxOffset += contentLength + 8;
 
         shpView.setInt32(shpI, i + 1); // record number
         shpView.setInt32(shpI + 4, contentLength / 2); // length
@@ -31,16 +33,34 @@ module.exports.write = function writePoints(geometries, extent, shpView, shxView
         shpView.setFloat64(shpI + 20, featureExtent.ymin, true);
         shpView.setFloat64(shpI + 28, featureExtent.xmax, true);
         shpView.setFloat64(shpI + 36, featureExtent.ymax, true);
-        shpView.setInt32(shpI + 44, 1, true); // PARTS=1
+        shpView.setInt32(shpI + 44, noParts, true);
         shpView.setInt32(shpI + 48, flattened.length, true); // POINTS
-        shpView.setInt32(shpI + 52, 0, true); // The only part - index zero
+        shpView.setInt32(shpI + 52, 0, true); // The first part - index zero
+
+        var onlyParts = coordinates.reduce(function (arr, coords) {
+            if (Array.isArray(coords[0][0])) {
+                arr = arr.concat(coords);
+            } else {
+                arr.push(coords);
+            }
+            return arr;
+        }, []);
+        for (var p = 1; p < noParts; p++) {
+            shpView.setInt32( // set part index
+                shpI + 52 + (p * 4),
+                onlyParts.reduce(function (a, b, idx) {
+                    return idx < p ? a + b.length : a;
+                }, 0),
+                true
+            );
+        }
 
         flattened.forEach(function writeLine(coords, i) {
-            shpView.setFloat64(shpI + 56 + (i * 16), coords[0], true); // X
-            shpView.setFloat64(shpI + 56 + (i * 16) + 8, coords[1], true); // Y
+            shpView.setFloat64(shpI + 56 + (i * 16) + (noParts - 1) * 4, coords[0], true); // X
+            shpView.setFloat64(shpI + 56 + (i * 16) + (noParts - 1) * 4 + 8, coords[1], true); // Y
         });
 
-        shpI += contentLength;
+        shpI += contentLength + 8;
     }
 };
 
@@ -60,6 +80,24 @@ module.exports.extent = function(coordinates) {
     }, ext.blank());
 };
 
+function parts(geometries, TYPE) {
+    var no = 1;
+    if (TYPE === types.geometries.POLYGON || TYPE === types.geometries.POLYLINE)  {
+        no = geometries.reduce(function (no, coords) {
+            no += coords.length;
+            if (Array.isArray(coords[0][0][0])) { // multi
+                no += coords.reduce(function (no, rings) {
+                    return no + rings.length - 1; // minus outer
+                }, 0);
+            }
+            return no;
+        }, 0);
+    }
+    return no;
+}
+
+module.exports.parts = parts;
+
 function totalPoints(geometries) {
     var sum = 0;
     geometries.forEach(function(g) { sum += g.length; });
@@ -76,3 +114,4 @@ function justCoords(coords, l) {
         return coords;
     }
 }
+

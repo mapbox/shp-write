@@ -20,7 +20,7 @@ write(
 function finish(err, files) {
     fs.writeFileSync('lines.shp', toBuffer(files.shp.buffer));
     fs.writeFileSync('lines.shx', toBuffer(files.shx.buffer));
-    fs.writeFileSync('lines.dbf', files.dbf);
+    fs.writeFileSync('lines.dbf', toBuffer(files.dbf.buffer));
 }
 
 function toBuffer(ab) {

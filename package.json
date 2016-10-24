@@ -1,16 +1,22 @@
 {
   "name": "shp-write",
-  "version": "0.2.1",
+  "version": "0.2.7",
   "description": "write shapefiles from pure javascript",
   "main": "index.js",
   "scripts": {
     "test": "mocha -R spec",
+    "prepublish": "npm run make",
     "make": "browserify -s shpwrite ./ > shpwrite.js"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/tmcw/shp-write.git"
+    "url": "git://github.com/mapbox/shp-write.git"
   },
+  "files": [
+    "index.js",
+    "src",
+    "shpwrite.js"
+  ],
   "keywords": [
     "shapefile",
     "write",
@@ -25,14 +31,15 @@
   ],
   "license": "BSD-2-Clause",
   "bugs": {
-    "url": "https://github.com/tmcw/shp-write/issues"
+    "url": "https://github.com/mapbox/shp-write/issues"
   },
   "dependencies": {
-    "dbf": "0.1.0",
-    "jszip": "2.4.0"
+    "dbf": "0.1.3",
+    "jszip": "2.5.0"
   },
   "devDependencies": {
-    "expect.js": "~0.2.0",
-    "mocha": "~1.13.0"
+    "browserify": "^13.0.0",
+    "expect.js": "~0.3.1",
+    "mocha": "~2.4.5"
   }
 }
