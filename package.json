@@ -1,6 +1,6 @@
 {
   "name": "shp-write",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "write shapefiles from pure javascript",
   "main": "index.js",
   "scripts": {
