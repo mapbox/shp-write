@@ -39,7 +39,13 @@
   },
   "devDependencies": {
     "browserify": "^13.0.0",
+    "cz-conventional-changelog": "^1.2.0",
     "expect.js": "~0.3.1",
     "mocha": "~2.4.5"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }
