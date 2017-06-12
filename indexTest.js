@@ -27,4 +27,12 @@ require('./src/download')({
             ]
         }
     }]
+}, {
+    fileName: 'shapefiles',
+    folder: 'shapefiles',
+    types: {
+        point: 'points',
+        polygon: 'polygons',
+        line: 'lines'
+    }
 });

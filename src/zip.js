@@ -28,11 +28,8 @@ module.exports = function(gj, options) {
         }
     });
 
-    var generateOptions = { compression:'STORE' };
-
-    if (!process.browser) {
-      generateOptions.type = 'nodebuffer';
-    }
-
-    return zip.generate(generateOptions);
+    return zip.generateAsync({
+        type: process.browser === undefined ? 'nodebuffer' : 'blob',
+        compression: 'DEFLATE'
+    });
 };
