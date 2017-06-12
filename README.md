@@ -29,9 +29,8 @@ Or in a browser
 ```js
 var shpwrite = require('shp-write');
 
-// (optional) set names for feature types and zipped folder
+// (optional) set names for feature types
 var options = {
-    folder: 'myshapes',
     types: {
         point: 'mypoints',
         polygon: 'mypolygons',
