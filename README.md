@@ -35,7 +35,7 @@ var options = {
     types: {
         point: 'mypoints',
         polygon: 'mypolygons',
-        line: 'mylines'
+        polyline: 'mylines'
     }
 }
 // a GeoJSON bridge for features
