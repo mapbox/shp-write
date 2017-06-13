@@ -16,6 +16,11 @@ Or in a browser
 
     https://unpkg.com/shp-write@latest/shpwrite.js
 
+## Testing
+
+To test the download functionality run `npm run make-test` and open index.html in browser.
+This should start an immediate download of test features defined in `indexTest.js`.
+
 ## Caveats
 
 * Requires a capable fancy modern browser with [Typed Arrays](http://caniuse.com/#feat=typedarrays)
