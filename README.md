@@ -22,15 +22,15 @@ Or in a browser
   support
 * Geometries: Point, LineString, Polygon, MultiLineString, MultiPolygon
 * Tabular-style properties export with Shapefile's field name length limit
-* Uses jsZip for ZIP files, but [compression is buggy](https://github.com/Stuk/jszip/issues/53) so it uses STORE instead of DEFLATE.
 
 ## Example
 
 ```js
 var shpwrite = require('shp-write');
 
-// (optional) set names for feature types and zipped folder
+// (optional) set names for zip file, zipped folder and feature types
 var options = {
+    file: 'myshapes'
     folder: 'myshapes',
     types: {
         point: 'mypoints',
