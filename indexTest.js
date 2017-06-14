@@ -75,7 +75,7 @@ require('./src/download')({
         }
     ]
 }, {
-    fileName: 'shapefiles',
+    file: 'shapefiles',
     folder: 'shapefiles',
     types: {
         point: 'points',
