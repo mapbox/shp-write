@@ -1,11 +1,12 @@
 var write = require('./write'),
     geojson = require('./geojson'),
-    prj = require('./prj'),
+    defaultPrj = require('./prj'),
     JSZip = require('jszip');
 
 module.exports = function(gj, options) {
 
     var zip = new JSZip();
+    var prj = (options && options.prj) ? options.prj : defaultPrj;
 
     [geojson.point(gj), geojson.line(gj), geojson.polygon(gj)]
         .forEach(function(l) {
