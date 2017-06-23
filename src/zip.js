@@ -28,7 +28,7 @@ module.exports = function(gj, options) {
         }
     });
 
-    var generateOptions = { compression:'STORE' };
+    var generateOptions = { compression:'STORE', type:"base64" };
 
     if (!process.browser) {
       generateOptions.type = 'nodebuffer';
