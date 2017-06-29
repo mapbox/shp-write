@@ -29,9 +29,8 @@ Or in a browser
 ```js
 var shpwrite = require('shp-write');
 
-// (optional) set names for feature types and zipped folder
+// (optional) set names for feature types
 var options = {
-    folder: 'myshapes',
     types: {
         point: 'mypoints',
         polygon: 'mypolygons',
@@ -65,6 +64,15 @@ shpwrite.download({
     ]
 }, options);
 // triggers a download of a zip file with shapefiles contained within.
+```
+
+## Custom .prj file
+To pass a custom [WKT string](http://www.opengeospatial.org/standards/wkt-crs) in the .prj file to define a different projection the prj option can be used:
+
+```js
+var options = {
+    prj: 'PROJCS["Amersfoort / RD New",GEOGCS["Amersfoort",DATUM["D_Amersfoort",SPHEROID["Bessel_1841",6377397.155,299.1528128]],PRIMEM["Greenwich",0],UNIT["Degree",0.017453292519943295]],PROJECTION["Stereographic_North_Pole"],PARAMETER["standard_parallel_1",52.15616055555555],PARAMETER["central_meridian",5.38763888888889],PARAMETER["scale_factor",0.9999079],PARAMETER["false_easting",155000],PARAMETER["false_northing",463000],UNIT["Meter",1]]'
+}
 ```
 
 ## API

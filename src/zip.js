@@ -1,12 +1,12 @@
 var write = require('./write'),
     geojson = require('./geojson'),
-    prj = require('./prj'),
+    defaultPrj = require('./prj'),
     JSZip = require('jszip');
 
 module.exports = function(gj, options) {
 
-    var zip = new JSZip(),
-        layers = zip.folder(options && options.folder ? options.folder : 'layers');
+    var zip = new JSZip();
+    var prj = (options && options.prj) ? options.prj : defaultPrj;
 
     [geojson.point(gj), geojson.line(gj), geojson.polygon(gj)]
         .forEach(function(l) {
@@ -20,10 +20,10 @@ module.exports = function(gj, options) {
                 l.geometries,
                 function(err, files) {
                     var fileName = options && options.types[l.type.toLowerCase()] ? options.types[l.type.toLowerCase()] : l.type;
-                    layers.file(fileName + '.shp', files.shp.buffer, { binary: true });
-                    layers.file(fileName + '.shx', files.shx.buffer, { binary: true });
-                    layers.file(fileName + '.dbf', files.dbf.buffer, { binary: true });
-                    layers.file(fileName + '.prj', prj);
+                    zip.file(fileName + '.shp', files.shp.buffer, { binary: true });
+                    zip.file(fileName + '.shx', files.shx.buffer, { binary: true });
+                    zip.file(fileName + '.dbf', files.dbf.buffer, { binary: true });
+                    zip.file(fileName + '.prj', prj);
                 });
         }
     });
