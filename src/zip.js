@@ -3,7 +3,7 @@ var write = require('./write'),
     prj = require('./prj'),
     JSZip = require('jszip');
 
-module.exports = function(gj, options) {
+module.exports = function(gj, options, generateOptions) {
 
     var zip = new JSZip(),
         layers = zip.folder(options && options.folder ? options.folder : 'layers');
@@ -15,7 +15,7 @@ module.exports = function(gj, options) {
                 // field definitions
                 l.properties,
                 // geometry type
-                l.type,
+                l.type, 
                 // geometries
                 l.geometries,
                 function(err, files) {
@@ -28,10 +28,14 @@ module.exports = function(gj, options) {
         }
     });
 
-    var generateOptions = { compression:'STORE' };
+    if (generateOptions){
+        generateOptions.compression = 'STORE';
+    }else{
+        generateOptions = { compression:'STORE' };
 
-    if (!process.browser) {
-      generateOptions.type = 'nodebuffer';
+        if (!process.browser) {
+            generateOptions.type = 'nodebuffer';
+          }
     }
 
     return zip.generate(generateOptions);
