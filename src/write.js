@@ -5,12 +5,18 @@ var types = require('./types'),
     getFields = require('./fields'),
     assert = require('assert'),
     pointWriter = require('./points'),
+    multipointWriter = require('./multipoint'),
     polyWriter = require('./poly');
 
 var writers = {
     1: pointWriter,
+    3: polyWriter,
     5: polyWriter,
-    3: polyWriter
+    8: multipointWriter,
+    11: pointWriter,
+    13: polyWriter,
+    15: polyWriter,
+    18: multipointWriter
 };
 
 var recordHeaderLength = 8;
@@ -23,7 +29,7 @@ function write(rows, geometry_type, geometries, callback) {
     var TYPE = types.geometries[geometry_type],
         writer = writers[TYPE],
         parts = writer.parts(geometries, TYPE),
-        shpLength = 100 + (parts - geometries.length) * 4 + writer.shpLength(geometries),
+        shpLength = 100 + (parts - geometries.length) * 4 + writer.shpLength(geometries, TYPE),
         shxLength = 100 + writer.shxLength(geometries),
         shpBuffer = new ArrayBuffer(shpLength),
         shpView = new DataView(shpBuffer),
@@ -65,4 +71,8 @@ function writeExtent(extent, view) {
     view.setFloat64(44, extent.ymin, true);
     view.setFloat64(52, extent.xmax, true);
     view.setFloat64(60, extent.ymax, true);
+    view.setFloat64(68, extent.zmin, true);
+    view.setFloat64(76, extent.zmax, true);
+    view.setFloat64(84, extent.mmin, true);
+    view.setFloat64(92, extent.mmax, true);
 }

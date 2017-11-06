@@ -5,7 +5,8 @@ module.exports.write = function writePoints(geometries, extent, shpView, shxView
 
     var shpI = 0,
         shxI = 0,
-        shxOffset = 100;
+        shxOffset = 100,
+        is3D = TYPE === types.geometries.POLYLINEZ || TYPE === types.geometries.POLYGONZ;
 
     geometries.forEach(writePolyLine);
 
@@ -14,6 +15,10 @@ module.exports.write = function writePoints(geometries, extent, shpView, shxView
         var flattened = justCoords(coordinates),
             noParts = parts([coordinates], TYPE),
             contentLength = (flattened.length * 16) + 48 + (noParts - 1) * 4;
+
+        if (is3D) {
+            contentLength += 32 + flattened.length * 16;
+        }
 
         var featureExtent = flattened.reduce(function(extent, c) {
             return ext.enlarge(extent, c);
@@ -28,7 +33,7 @@ module.exports.write = function writePoints(geometries, extent, shpView, shxView
 
         shpView.setInt32(shpI, i + 1); // record number
         shpView.setInt32(shpI + 4, contentLength / 2); // length
-        shpView.setInt32(shpI + 8, TYPE, true); // POLYLINE=3
+        shpView.setInt32(shpI + 8, TYPE, true); // POLYLINE=3, POLYGON=5, POLYLINEZ=13, POLYGONZ=15
         shpView.setFloat64(shpI + 12, featureExtent.xmin, true); // EXTENT
         shpView.setFloat64(shpI + 20, featureExtent.ymin, true);
         shpView.setFloat64(shpI + 28, featureExtent.xmax, true);
@@ -55,19 +60,72 @@ module.exports.write = function writePoints(geometries, extent, shpView, shxView
             );
         }
 
+        shpI += 56 + (noParts - 1) * 4;
+
+        var zMin = Number.MAX_VALUE;
+        var zMax = -Number.MAX_VALUE;
+        var mMin = Number.MAX_VALUE;
+        var mMax = -Number.MAX_VALUE;
         flattened.forEach(function writeLine(coords, i) {
-            shpView.setFloat64(shpI + 56 + (i * 16) + (noParts - 1) * 4, coords[0], true); // X
-            shpView.setFloat64(shpI + 56 + (i * 16) + (noParts - 1) * 4 + 8, coords[1], true); // Y
+            if ((coords[2] || 0) < zMin) {
+                zMin = coords[2] || 0;
+            }
+
+            if ((coords[2] || 0) > zMax) {
+                zMax = coords[2] || 0;
+            }
+
+            if ((coords[3] || 0) < mMin) {
+                mMin = coords[3] || 0;
+            }
+
+            if ((coords[3] || 0) > mMax) {
+                mMax = coords[3] || 0;
+            }
+
+            shpView.setFloat64(shpI, coords[0], true); // X
+            shpView.setFloat64(shpI + 8, coords[1], true); // Y
+
+            shpI += 16;
         });
 
-        shpI += contentLength + 8;
+        if (is3D) {
+            // Write z value range
+            shpView.setFloat64(shpI, zMin, true);
+            shpView.setFloat64(shpI + 8, zMax, true);
+            shpI += 16
+
+            // Write z values.
+            flattened.forEach(function(p, i) {
+                shpView.setFloat64(shpI, p[2] || 0, true);
+                shpI += 8;
+            });
+
+            // Write m value range.
+            shpView.setFloat64(shpI, mMin, true);
+            shpView.setFloat64(shpI + 8, mMax, true);
+            shpI += 16;
+
+            // Write m values;
+            flattened.forEach(function(p, i) {
+                shpView.setFloat64(shpI, p[3] || 0, true);
+                shpI += 8;
+            });
+        }
     }
 };
 
-module.exports.shpLength = function(geometries) {
-    return (geometries.length * 56) +
+module.exports.shpLength = function(geometries, TYPE) {
+    var flattened = justCoords(geometries);
+    var length = (geometries.length * 56) +
         // points
-        (justCoords(geometries).length * 16);
+        (flattened.length * 16);
+    
+    if (TYPE === types.geometries.POLYLINEZ || TYPE === types.geometries.POLYGONZ) {
+        length += 32 + flattened.length * 16;
+    }
+
+    return length
 };
 
 module.exports.shxLength = function(geometries) {
@@ -82,7 +140,7 @@ module.exports.extent = function(coordinates) {
 
 function parts(geometries, TYPE) {
     var no = 1;
-    if (TYPE === types.geometries.POLYGON || TYPE === types.geometries.POLYLINE)  {
+    if (TYPE === types.geometries.POLYGON || TYPE === types.geometries.POLYLINE || TYPE === types.geometries.POLYGONZ || TYPE === types.geometries.POLYLINEZ) {
         no = geometries.reduce(function (no, coords) {
             no += coords.length;
             if (Array.isArray(coords[0][0][0])) { // multi
