@@ -20,7 +20,7 @@ Or in a browser
 
 * Requires a capable fancy modern browser with [Typed Arrays](http://caniuse.com/#feat=typedarrays)
   support
-* Geometries: Point, LineString, Polygon, MultiLineString, MultiPolygon
+* Geometries: Point, PointZ, MultiPoint, MultiPointZ, LineString, LineStringZ, Polygon, PolygonZ, MultiLineString, MultiPolygon
 * Tabular-style properties export with Shapefile's field name length limit
 * Uses jsZip for ZIP files, but [compression is buggy](https://github.com/Stuk/jszip/issues/53) so it uses STORE instead of DEFLATE.
 
