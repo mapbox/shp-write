@@ -51,6 +51,6 @@ function isOfDimension(TYPE, just3d) {
                 }, []) :
                 f.geometry.coordinates;
         }
-        return just3d ? coordinates.some(c => c.length >= 3) : coordinates.every(c => c.length === 2); 
+        return just3d ? coordinates.some(function(c) { return c.length >= 3 }) : coordinates.every(function(c) { return c.length === 2 });
     }
 }
