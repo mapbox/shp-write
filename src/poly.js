@@ -108,11 +108,18 @@ function totalPoints(geometries) {
 function justCoords(coords, l) {
     if (l === undefined) l = [];
     if (typeof coords[0][0] == 'object') {
-        return reduce(coords, function(memo, c) {
-            return memo.concat(justCoords(c));
-        }, l);
+        return reduce(coords, accumulateCoords, l);
     } else {
         return coords;
     }
+}
+
+function accumulateCoords(memo, c) {
+  const memoPosition = memo.length;
+  const coords = justCoords(c);
+  forEach(coords, (coord, i) => {
+    memo[memoPosition + i] = coord;
+  })
+  return memo;
 }
 
