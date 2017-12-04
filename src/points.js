@@ -1,4 +1,5 @@
 var ext = require('./extent');
+const { reduce, forEach } = require('./util')
 
 module.exports.write = function writePoints(coordinates, extent, shpView, shxView) {
 
@@ -7,7 +8,7 @@ module.exports.write = function writePoints(coordinates, extent, shpView, shxVie
         shpI = 0,
         shxI = 0;
 
-    coordinates.forEach(function writePoint(coords, i) {
+    forEach(coordinates, function writePoint(coords, i) {
         // HEADER
         // 4 record number
         // 4 content length in 16-bit words (20/2)
@@ -31,7 +32,7 @@ module.exports.write = function writePoints(coordinates, extent, shpView, shxVie
 };
 
 module.exports.extent = function(coordinates) {
-    return coordinates.reduce(function(extent, coords) {
+    return reduce(coordinates, function(extent, coords) {
         return ext.enlarge(extent, coords);
     }, ext.blank());
 };
