@@ -5,7 +5,7 @@ module.exports.obj = obj;
 
 function geojson(features) {
     var fields = {};
-    features.forEach(collect);
+    forEach(features, collect);
     function collect(f) { inherit(fields, f.properties); }
     return obj(fields);
 }

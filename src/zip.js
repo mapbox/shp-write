@@ -2,14 +2,14 @@ var write = require('./write'),
     geojson = require('./geojson'),
     prj = require('./prj'),
     JSZip = require('jszip');
+const { forEach } = require('./util');
 
 module.exports = function(gj, options) {
 
     var zip = new JSZip(),
         layers = zip.folder(options && options.folder ? options.folder : 'layers');
 
-    [geojson.point(gj), geojson.line(gj), geojson.polygon(gj)]
-        .forEach(function(l) {
+    forEach([geojson.point(gj), geojson.line(gj), geojson.polygon(gj)], function(l) {
         if (l.geometries.length && l.geometries[0].length) {
             write(
                 // field definitions
