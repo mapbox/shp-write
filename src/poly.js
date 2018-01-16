@@ -114,4 +114,3 @@ function justCoords(coords, l) {
         return coords;
     }
 }
-
