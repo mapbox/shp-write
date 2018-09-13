@@ -15,7 +15,7 @@ module.exports = function(gj, options, generateOptions) {
                 // field definitions
                 l.properties,
                 // geometry type
-                l.type, 
+                l.type,
                 // geometries
                 l.geometries,
                 function(err, files) {
@@ -28,15 +28,15 @@ module.exports = function(gj, options, generateOptions) {
         }
     });
 
-    if (generateOptions){
+    if (generateOptions) {
         generateOptions.compression = 'STORE';
-    }else{
-        generateOptions = { compression:'STORE' };
+    } else {
+        generateOptions = { compression:'STORE', type:'base64' };
 
         if (!process.browser) {
             generateOptions.type = 'nodebuffer';
           }
     }
 
-    return zip.generate(generateOptions);
+    return zip.generateAsync(generateOptions);
 };
