@@ -6,6 +6,8 @@ Writes shapefile in pure javascript. Uses [dbf](https://github.com/tmcw/dbf)
 for the data component, and [jsZIP](http://stuk.github.io/jszip/) to generate
 ZIP file downloads in-browser.
 
+This version solved the issue (#66) related to multipolygon problem.
+
 ## Usage
 
 For node.js or [browserify](https://github.com/substack/node-browserify)
