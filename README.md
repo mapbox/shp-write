@@ -33,11 +33,13 @@ var shpwrite = require('shp-write');
 var options = {
         folder: "my-shapefile",
         types: {
-            point: points,
-            polygon: polygons,
-            line: lines
+            point: "points",
+            polygon: "polygons",
+            line: "lines"
         }
     }
+
+// Projection: WGS84
 
 var geojson = {
   "type": "FeatureCollection",
