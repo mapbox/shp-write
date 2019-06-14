@@ -6,7 +6,7 @@ Writes shapefile in pure javascript. Uses [dbf](https://github.com/tmcw/dbf)
 for the data component, and [jsZIP](http://stuk.github.io/jszip/) to generate
 ZIP file downloads in-browser.
 
-This version solved the issue ([#66](https://github.com/mapbox/shp-write/issues/66)) related to multipolygon problem.
+This version solved the issue ([#66](https://github.com/mapbox/shp-write/issues/66)) related to multipolygon problem. Also it allows the downloaded zip filename customization.
 
 ## Usage
 
