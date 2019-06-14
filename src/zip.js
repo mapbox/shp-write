@@ -9,7 +9,7 @@ module.exports = function(gj, options) {
         layers = zip.folder(options && options.folder ? options.folder : 'layers');
 
     [geojson.point(gj), geojson.line(gj), geojson.polygon(gj)]
-        .forEach(function(l) {
+    .forEach(function(l) {
         if (l.geometries.length && l.geometries[0].length) {
             write(
                 // field definitions
@@ -28,10 +28,10 @@ module.exports = function(gj, options) {
         }
     });
 
-    var generateOptions = { compression:'STORE' };
+    var generateOptions = { compression: 'STORE' };
 
     if (!process.browser) {
-      generateOptions.type = 'nodebuffer';
+        generateOptions.type = 'nodebuffer';
     }
 
     return zip.generate(generateOptions);
