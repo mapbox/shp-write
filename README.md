@@ -25,6 +25,8 @@ Or in a browser
 * Uses jsZip for ZIP files, but [compression is buggy](https://github.com/Stuk/jszip/issues/53) so it uses STORE instead of DEFLATE.
 
 ## Example
+
+![Screenshot](https://github.com/jmmluna/shp-write/blob/master/download.png)
 ```js
 var shpwrite = require('shp-write');
 
