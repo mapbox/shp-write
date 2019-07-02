@@ -28,7 +28,7 @@ Or in a browser
 
 ## Example
 
-![Screenshot](https://github.com/jmmluna/shp-write/blob/master/download.png)
+![Screenshot](https://github.com/jmmluna/shp-writer/blob/master/download.png)
 ```js
 var shpWriter = require('shp-writer');
 
