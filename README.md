@@ -24,11 +24,11 @@ Or in a browser
 * Tabular-style properties export with Shapefile's field name length limit
 * Uses jsZip for ZIP files, but [compression is buggy](https://github.com/Stuk/jszip/issues/53) so it uses STORE instead of DEFLATE.
 
-## Example
+## Polygon example
 
 ![Screenshot](https://github.com/jmmluna/shp-writer/blob/master/download.png)
 ```js
-var shpWriter = require('shp-write');
+var shpwrite = require('shp-write');
 
 var options = {
         folder: "my-shapefile",
@@ -153,10 +153,10 @@ var geojson = {
   ]
 };
 
-shpWriter.download(geojson, options);
+shpwrite.download(geojson, options);
 
 ```
-## Example
+## Point example
 
 ```js
 var shpwrite = require('shp-write');
