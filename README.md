@@ -30,7 +30,7 @@ Or in a browser
 
 ![Screenshot](https://github.com/jmmluna/shp-write/blob/master/download.png)
 ```js
-var shpwrite = require('shp-write');
+var shpWriter = require('shp-writer');
 
 var options = {
         folder: "my-shapefile",
@@ -155,7 +155,7 @@ var geojson = {
   ]
 };
 
-shpwrite.download(geojson, options);
+shpWriter.download(geojson, options);
 
 ```
 ## Example
