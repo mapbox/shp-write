@@ -1,18 +1,16 @@
 [![Build Status](https://secure.travis-ci.org/mapbox/shp-write.svg?branch=master)](http://travis-ci.org/mapbox/shp-write)
 
-# shp-writer
+# shp-write
 
 Writes shapefile in pure javascript. Uses [dbf](https://github.com/tmcw/dbf)
 for the data component, and [jsZIP](http://stuk.github.io/jszip/) to generate
 ZIP file downloads in-browser.
 
-This version solved the issue ([#66](https://github.com/mapbox/shp-write/issues/66)) related to multipolygon problem. Also it allows the downloaded zip filename customization.
-
 ## Usage
 
 For node.js or [browserify](https://github.com/substack/node-browserify)
 
-    npm install --save shp-writer
+    npm install --save shp-write
 
 Or in a browser
 
@@ -30,7 +28,7 @@ Or in a browser
 
 ![Screenshot](https://github.com/jmmluna/shp-writer/blob/master/download.png)
 ```js
-var shpWriter = require('shp-writer');
+var shpWriter = require('shp-write');
 
 var options = {
         folder: "my-shapefile",
