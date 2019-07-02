@@ -1,6 +1,6 @@
 [![Build Status](https://secure.travis-ci.org/mapbox/shp-write.svg?branch=master)](http://travis-ci.org/mapbox/shp-write)
 
-# shp-write
+# shp-writer
 
 Writes shapefile in pure javascript. Uses [dbf](https://github.com/tmcw/dbf)
 for the data component, and [jsZIP](http://stuk.github.io/jszip/) to generate
@@ -12,7 +12,7 @@ This version solved the issue ([#66](https://github.com/mapbox/shp-write/issues/
 
 For node.js or [browserify](https://github.com/substack/node-browserify)
 
-    npm install --save shp-write
+    npm install --save shp-writer
 
 Or in a browser
 
