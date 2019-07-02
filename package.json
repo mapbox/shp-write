@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/jmmluna/shp-writer.git"
+    "url": "git://github.com/mapbox/shp-write.git"
   },
   "files": [
     "index.js",
