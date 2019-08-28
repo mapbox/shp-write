@@ -6,11 +6,13 @@ var write = require('./write'),
 module.exports = function(gj, options) {
 
     var zip = new JSZip(),
-        layers = zip.folder(options && options.folder ? options.folder : 'layers');
+        layers;
 
     // if options.folder is set to false, zip files without a folder
     if (options && options.folder === false) {
         layers = zip;
+    } else {
+        layers = zip.folder(options && options.folder ? options.folder : 'layers');
     }
     
     [geojson.point(gj), geojson.line(gj), geojson.polygon(gj)]
