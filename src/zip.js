@@ -8,13 +8,13 @@ module.exports = function(gj, options) {
     var zip = new JSZip(),
         layers;
 
-    // if options.folder is set to false, zip files without a folder
-    if (options && options.folder === false) {
-        layers = zip;
+    // if options.folder is set, zip to a folder with that name
+    if (options && options.folder && typeof options.folder === 'string') {
+        layers = zip.folder(options.folder);
     } else {
-        layers = zip.folder(options && options.folder ? options.folder : 'layers');
+        layers = zip;
     }
-    
+
     [geojson.point(gj), geojson.line(gj), geojson.polygon(gj)]
         .forEach(function(l) {
         if (l.geometries.length && l.geometries[0].length) {
