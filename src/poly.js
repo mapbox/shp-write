@@ -7,6 +7,20 @@ module.exports.write = function writePoints(geometries, extent, shpView, shxView
         shxI = 0,
         shxOffset = 100;
 
+    //Ensure polygon rings are ordered in correct direction
+    if(TYPE === types.geometries.POLYGON){
+        geometries = geometries.reduce(function(geom_acc, poly){
+            var flipped = poly.reduce(function(poly_acc, ring, idx){
+                //External rings must be clockwise, Internal must be counter-clockwise
+                idx == 0 
+                ? isClockwise(ring) ? poly_acc.push(ring) : poly_acc.push(ring.reverse())
+                : isClockwise(ring) ? poly_acc.push(ring.reverse()) : poly_acc.push(ring);
+                return poly_acc;
+            }, []);
+            geom_acc.push(flipped);
+            return geom_acc;
+        }, []);
+    }
     geometries.forEach(writePolyLine);
 
     function writePolyLine(coordinates, i) {
@@ -61,6 +75,16 @@ module.exports.write = function writePoints(geometries, extent, shpView, shxView
         });
 
         shpI += contentLength + 8;
+    }
+
+    //Takes a ring of coordinates. Returns true if they're defined in clockwise order
+    function isClockwise(ring){
+        var sum = 0;
+        for(var i = 0; i < ring.length; i++){
+            var prevIdx = i == 0 ? ring.length - 1 : i - 1;
+            sum += (ring[i][0] - ring[prevIdx][0])*(ring[i][1] + ring[prevIdx][1]);
+        }
+        return sum > 0 ? true : false;
     }
 };
 
