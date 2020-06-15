@@ -27,7 +27,11 @@
     {
       "name": "Nick Baugh",
       "email": "niftylettuce@gmail.com"
-    }
+    },
+    {
+      "name": "Jason Graves",
+      "email": "jgraves@novilabs.com"
+    },
   ],
   "license": "BSD-2-Clause",
   "bugs": {
