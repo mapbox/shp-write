@@ -105,3 +105,4 @@ object.
 ## Contributors
 
 * Nick Baugh <niftylettuce@gmail.com>
+* Jason Graves <jgraves@novilabs.com>
