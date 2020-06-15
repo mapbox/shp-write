@@ -3,7 +3,7 @@
 # shp-write
 
 Writes shapefile in pure javascript. Uses [dbf](https://github.com/tmcw/dbf)
-for the data component, and [jsZIP](http://stuk.github.io/jszip/) to generate
+for the data component, [FileSaver](https://github.com/eligrey/FileSaver.js/) and [jsZIP](http://stuk.github.io/jszip/) to generate
 ZIP file downloads in-browser.
 
 ## Usage
@@ -22,7 +22,7 @@ Or in a browser
   support
 * Geometries: Point, LineString, Polygon, MultiLineString, MultiPolygon
 * Tabular-style properties export with Shapefile's field name length limit
-* Uses jsZip for ZIP files, but [compression is buggy](https://github.com/Stuk/jszip/issues/53) so it uses STORE instead of DEFLATE.
+* Uses jsZip for ZIP files.
 
 ## Example
 
@@ -36,7 +36,8 @@ var options = {
         point: 'mypoints',
         polygon: 'mypolygons',
         line: 'mylines'
-    }
+    },
+    filename: 'my-filename'
 }
 // a GeoJSON bridge for features
 shpwrite.download({
@@ -104,3 +105,4 @@ object.
 ## Contributors
 
 * Nick Baugh <niftylettuce@gmail.com>
+* Jason Graves <jgraves@novilabs.com>
