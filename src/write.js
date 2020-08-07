@@ -18,7 +18,7 @@ var recordHeaderLength = 8;
 module.exports = write;
 
 // Low-level writing interface
-function write(data, meta, geometry_type, geometries, callback) {
+function write(rows, geometry_type, geometries, callback, meta) {
 
     var TYPE = types.geometries[geometry_type],
         writer = writers[TYPE],
@@ -44,7 +44,7 @@ function write(data, meta, geometry_type, geometries, callback) {
     shpView.setInt32(24, shpLength / 2);
     shxView.setInt32(24, (50 + geometries.length * 4));
 
-    var dbfBuf = dbf.structure(data, meta);
+    var dbfBuf = dbf.structure(rows, meta);
 
     callback(null, {
         shp: shpView,
