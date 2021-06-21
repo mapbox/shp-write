@@ -3,7 +3,7 @@ var write = require('./write'),
     prj = require('./prj'),
     JSZip = require('jszip');
 
-module.exports = function(gj, options) {
+module.exports = function(gj, options, stream = false) {
 
     var zip = new JSZip(),
         layers = zip.folder(options && options.folder ? options.folder : 'layers');
@@ -33,6 +33,6 @@ module.exports = function(gj, options) {
     if (!process.browser) {
       generateOptions.type = 'nodebuffer';
     }
-
-    return zip.generate(generateOptions);
+    if (stream) return zip.generateNodeStream({...generateOptions,streamFiles:true});
+    else return zip.generateAsync(generateOptions);
 };
