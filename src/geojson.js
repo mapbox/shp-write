@@ -1,5 +1,6 @@
 module.exports.point = justType('Point', 'POINT');
 module.exports.line = justType('LineString', 'POLYLINE');
+module.exports.multiline = justType('MultiLineString', 'POLYLINE');
 module.exports.polygon = justType('Polygon', 'POLYGON');
 module.exports.multipolygon = justType('MultiPolygon', 'POLYGON');
 
