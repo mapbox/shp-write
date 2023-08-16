@@ -38,9 +38,10 @@ module.exports = function (gj, options, stream = false) {
 
   var generateOptions = { compression: "STORE" };
 
-  if (!process.browser) {
-    generateOptions.type = "nodebuffer";
-  }
+  // Our implementation will DEFINITELY be in the browser for now.
+  // if (!process.browser) {
+  //   generateOptions.type = "nodebuffer";
+  // }
 
   if (stream)
     return zip.generateNodeStream({ ...generateOptions, streamFiles: true });
