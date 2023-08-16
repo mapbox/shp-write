@@ -18,52 +18,56 @@ Or in a browser
 
 ## Caveats
 
-* Requires a capable fancy modern browser with [Typed Arrays](http://caniuse.com/#feat=typedarrays)
+- Requires a capable fancy modern browser with [Typed Arrays](http://caniuse.com/#feat=typedarrays)
   support
-* Geometries: Point, LineString, Polygon, MultiLineString, MultiPolygon
-* Tabular-style properties export with Shapefile's field name length limit
-* Uses jsZip for ZIP files, but [compression is buggy](https://github.com/Stuk/jszip/issues/53) so it uses STORE instead of DEFLATE.
+- Geometries: Point, LineString, Polygon, MultiLineString, MultiPolygon
+- Tabular-style properties export with Shapefile's field name length limit
+- Uses jsZip for ZIP files, but [compression is buggy](https://github.com/Stuk/jszip/issues/53) so it uses STORE instead of DEFLATE.
 
 ## Example
 
 ```js
-var shpwrite = require('shp-write');
+var shpwrite = require("shp-write");
 
 // (optional) set names for feature types and zipped folder
 var options = {
-    folder: 'myshapes',
-    types: {
-        point: 'mypoints',
-        polygon: 'mypolygons',
-        line: 'mylines'
-    }
-}
+  folder: "myshapes",
+  filename: "mydownload",
+  types: {
+    point: "mypoints",
+    polygon: "mypolygons",
+    line: "mylines",
+  },
+};
 // a GeoJSON bridge for features
-shpwrite.download({
-    type: 'FeatureCollection',
+shpwrite.download(
+  {
+    type: "FeatureCollection",
     features: [
-        {
-            type: 'Feature',
-            geometry: {
-                type: 'Point',
-                coordinates: [0, 0]
-            },
-            properties: {
-                name: 'Foo'
-            }
+      {
+        type: "Feature",
+        geometry: {
+          type: "Point",
+          coordinates: [0, 0],
         },
-        {
-            type: 'Feature',
-            geometry: {
-                type: 'Point',
-                coordinates: [0, 10]
-            },
-            properties: {
-                name: 'Bar'
-            }
-        }
-    ]
-}, options);
+        properties: {
+          name: "Foo",
+        },
+      },
+      {
+        type: "Feature",
+        geometry: {
+          type: "Point",
+          coordinates: [0, 10],
+        },
+        properties: {
+          name: "Bar",
+        },
+      },
+    ],
+  },
+  options
+);
 // triggers a download of a zip file with shapefiles contained within.
 ```
 
@@ -95,12 +99,12 @@ object.
 
 ## Other Implementations
 
-* https://code.google.com/p/pyshp/
+- https://code.google.com/p/pyshp/
 
 ## Reference
 
-* http://www.esri.com/library/whitepapers/pdfs/shapefile.pdf
+- http://www.esri.com/library/whitepapers/pdfs/shapefile.pdf
 
 ## Contributors
 
-* Nick Baugh <niftylettuce@gmail.com>
+- Nick Baugh <niftylettuce@gmail.com>
