@@ -9,5 +9,7 @@ module.exports = function (gj, options) {
     link.download = (options.filename || options.folder) + ".zip";
   }
   link.click();
-  delete link;
+
+  document.body.removeChild(link);
+  window.URL.revokeObjectURL(link.href);
 };
