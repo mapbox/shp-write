@@ -1,7 +1,7 @@
 var zip = require("./zip");
 
-module.exports = function (gj, options) {
-  var content = zip(gj, options);
+module.exports = async function (gj, options) {
+  var content = await zip(gj, options);
   var link = document.createElement("a");
   link.href = "data:application/zip;base64," + content;
   link.rel = "noopener";
