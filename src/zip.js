@@ -36,7 +36,7 @@ module.exports = function (gj, options, stream = false) {
     }
   });
 
-  var generateOptions = { compression: "STORE" };
+  var generateOptions = { type: "base64", compression: "STORE" };
 
   // Our implementation will DEFINITELY be in the browser for now.
   // if (!process.browser) {
