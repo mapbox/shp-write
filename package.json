@@ -2,7 +2,8 @@
   "name": "shp-write",
   "version": "0.3.2",
   "description": "write shapefiles from pure javascript",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "test": "mocha -R spec",
     "prepublish": "npm run make",
