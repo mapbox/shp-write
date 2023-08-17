@@ -14,7 +14,8 @@
     "url": "git://github.com/mapbox/shp-write.git"
   },
   "files": [
-    "index.js",
+    "dist/index.js",
+    "dist/index.d.ts",
     "src",
     "shpwrite.js"
   ],
