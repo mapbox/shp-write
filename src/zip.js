@@ -36,14 +36,18 @@ module.exports = function (gj, options, stream = false) {
     }
   });
 
-  var generateOptions = { type: "base64", compression: "STORE" };
+  var generateOptions = { };
+  if (options && options.type) {
+    generateOptions.type = options.type;
+  }
 
-  // Our implementation will DEFINITELY be in the browser for now.
-  // if (!process.browser) {
-  //   generateOptions.type = "nodebuffer";
-  // }
+  if (options && options.compresssion) {
+    generateOptions.compression = options.compression;
+  }
 
-  if (stream)
+  if (stream) {
     return zip.generateNodeStream({ ...generateOptions, streamFiles: true });
-  else return zip.generateAsync(generateOptions);
+  }
+  
+  return zip.generateAsync(generateOptions);
 };
