@@ -69,5 +69,5 @@ type OutputType = keyof OutputByType;
   export function zip(
     geojson: GeoJSON.FeatureCollection, 
     options: DownloadOptions & ZipOptions = { compression: 'STORE' }, 
-    stream = false): Promise<any>;
+    stream = false): Promise<any> | ReadableStream;
 }
