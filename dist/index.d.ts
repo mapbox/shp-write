@@ -39,17 +39,23 @@ declare module "shp-write" {
     arraybuffer: ArrayBuffer;
     blob: Blob;
     nodebuffer: Buffer;
-}
-type OutputType = keyof OutputByType;
+  }
+  type OutputType = keyof OutputByType;
 
   export interface ZipOptions {
     compression: Compression,
     type: OutputType
   }
 
+  DEFAULT_ZIP_OPTIONS = {
+    compression: 'STORE',
+    type: 'base64'
+  }
+
   export function download(
     geojson: GeoJSON.FeatureCollection,
-    options?: DownloadOptions
+    options?: DownloadOptions,
+    zipOptions?: ZipOptions = DEFAULT_ZIP_OPTIONS
   ): void;
 
   export function write(
@@ -67,7 +73,8 @@ type OutputType = keyof OutputByType;
   ): void;
 
   export function zip(
-    geojson: GeoJSON.FeatureCollection, 
-    options: DownloadOptions & ZipOptions = { compression: 'STORE', type: 'base64' }, 
+    geojson: GeoJSON.FeatureCollection,
+    options: DownloadOptions,
+    zipOptions: ZipOptions = DEFAULT_ZIP_OPTIONS,
     stream = false): Promise<any> | ReadableStream;
 }

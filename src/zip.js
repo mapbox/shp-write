@@ -3,7 +3,15 @@ var write = require("./write"),
   prj = require("./prj"),
   JSZip = require("jszip");
 
-module.exports = function (gj, options, stream = false) {
+module.exports = function (
+  gj,
+  options,
+  zipOptions = {
+    compression: 'STORE',
+    type: 'base64'
+  },
+  stream = false
+) {
   var zip = new JSZip(),
     layers = zip.folder(options && options.folder ? options.folder : "layers");
 
@@ -36,18 +44,18 @@ module.exports = function (gj, options, stream = false) {
     }
   });
 
-  var generateOptions = { };
-  if (options && options.type) {
-    generateOptions.type = options.type;
+  var generateOptions = {};
+  if (zipOptions && zipOptions.type) {
+    generateOptions.type = zipOptions.type;
   }
 
-  if (options && options.compresssion) {
-    generateOptions.compression = options.compression;
+  if (zipOptions && zipOptions.compresssion) {
+    generateOptions.compression = zipOptions.compression;
   }
 
   if (stream) {
     return zip.generateNodeStream({ ...generateOptions, streamFiles: true });
   }
-  
+
   return zip.generateAsync(generateOptions);
 };
