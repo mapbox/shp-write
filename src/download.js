@@ -1,7 +1,14 @@
 var zip = require('./zip');
 var saveAs = require("file-saver").saveAs;
 
-module.exports = function (gj, options, zipOptions) {
+module.exports = function (
+    gj, 
+    options, 
+    zipOptions = {
+      compression: 'STORE',
+      type: 'base64'
+    }
+) {
   let filename = 'download';
   // since we only need a single filename object, we can use either the folder or
   // filename, depending on what was passed in
