@@ -33,6 +33,8 @@ var shpwrite = require("shp-write");
 var options = {
   folder: "myshapes",
   filename: "mydownload",
+  outputType: "base64",
+  compression: "DEFLATE",
   types: {
     point: "mypoints",
     polygon: "mypolygons",
