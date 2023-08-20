@@ -45,7 +45,7 @@ declare module "shp-write" {
 
   export interface ZipOptions {
     compression: Compression,
-    type: OutputType
+    outputType: OutputType
   }
 
   DEFAULT_ZIP_OPTIONS = {
