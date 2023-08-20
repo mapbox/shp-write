@@ -50,12 +50,17 @@ declare module "shp-write" {
 
   DEFAULT_ZIP_OPTIONS = {
     compression: 'STORE',
-    type: 'base64'
-  }
+    outputType: 'base64',
+    types: {
+      point: "mypoints",
+      polygon: "mypolygons",
+      line: "mylines",
+    },
+  };
 
   export function download(
     geojson: GeoJSON.FeatureCollection,
-    options?: DownloadOptions & ZipOptions= DEFAULT_ZIP_OPTIONS
+    options?: DownloadOptions & ZipOptions = DEFAULT_ZIP_OPTIONS
   ): void;
 
   export function write(

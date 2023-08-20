@@ -7,7 +7,12 @@ module.exports = function (
   gj,
   options = {
     compression: 'STORE',
-    type: 'base64'
+    outputType: 'base64',
+    types: {
+      point: "mypoints",
+      polygon: "mypolygons",
+      line: "mylines",
+    },
   },
   stream = false
 ) {

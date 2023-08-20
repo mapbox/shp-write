@@ -9,11 +9,16 @@ module.exports = function (
     gj, 
     options = {
       compression: 'STORE',
-      type: 'base64'
-    }
+      outputType: 'base64',
+      types: {
+        point: "mypoints",
+        polygon: "mypolygons",
+        line: "mylines",
+      },
+    },
 ) {
   let filename = 'download';
-  
+
   // since we only need a single filename object, we can use either the folder or
   // filename, depending on what was passed in
   if (options && (options.filename || options.folder)) {
