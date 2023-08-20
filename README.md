@@ -24,12 +24,12 @@ Or in a browser
 - Tabular-style properties export with Shapefile's field name length limit
 - Uses jsZip for ZIP files, but [compression is buggy](https://github.com/Stuk/jszip/issues/53) so it uses STORE instead of DEFLATE.
 
-## Example
+## Minimal Example
 
 ```js
 var shpwrite = require("shp-write");
 
-// (optional) set names for feature types and zipped folder
+// (minimal) set names for feature types and zipped folder
 var options = {
   folder: "myshapes",
   filename: "mydownload",
@@ -72,12 +72,6 @@ shpwrite.download(
 ```
 
 ## API
-
-### `download(geojson)`
-
-Given a [GeoJSON](http://geojson.org/) FeatureCollection as an object,
-converts convertible features into Shapefiles and triggers a download.
-
 ### `write(data, geometrytype, geometries, callback)`
 
 Given data, an array of objects for each row of data, geometry, the OGC standard
@@ -92,10 +86,22 @@ arrays, generate a shapfile and call the callback with `err` and an object with
 }
 ```
 
-### `zip(geojson)`
+### `zip(geojson, [options])`
 
 Generate a ArrayBuffer of a zipped shapefile, dbf, and prj, from a GeoJSON
 object.
+
+### DEPRECTEAD! May be removed in a future version
+### `download(geojson, [options])`
+
+Given a [GeoJSON](http://geojson.org/) FeatureCollection as an object,
+converts convertible features into Shapefiles and triggers a download. 
+
+The additional `options` parameter is passed to the underlying `zip` call. 
+
+This is now marked as deprecated because it applies to browsers only and the
+user should instead rely on an external library for this functionality like
+`file-saver` or `downloadjs`
 
 ## Other Implementations
 

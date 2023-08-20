@@ -5,8 +5,7 @@ var write = require("./write"),
 
 module.exports = function (
   gj,
-  options,
-  zipOptions = {
+  options = {
     compression: 'STORE',
     type: 'base64'
   },
@@ -45,12 +44,12 @@ module.exports = function (
   });
 
   var generateOptions = {};
-  if (zipOptions && zipOptions.type) {
-    generateOptions.type = zipOptions.type;
+  if (options && options.outputType) {
+    generateOptions.type = options.outputType;
   }
 
-  if (zipOptions && zipOptions.compresssion) {
-    generateOptions.compression = zipOptions.compression;
+  if (options && options.compresssion) {
+    generateOptions.compression = options.compression;
   }
 
   if (stream) {
