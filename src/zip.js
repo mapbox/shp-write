@@ -31,7 +31,7 @@ module.exports = function (
         l.geometries,
         function (err, files) {
           var fileName =
-            options && options.types[l.type.toLowerCase()]
+            options && options.types && options.types[l.type.toLowerCase()]
               ? options.types[l.type.toLowerCase()]
               : l.type;
           zipTarget.file(fileName + ".shp", files.shp.buffer, { binary: true });

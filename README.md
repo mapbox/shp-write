@@ -29,16 +29,8 @@ Or in a browser
 ```js
 var shpwrite = require("shp-write");
 
-// (minimal) set names for feature types
-var options = {
-  types: {
-    point: "mypoints",
-    polygon: "mypolygons",
-    line: "mylines",
-  },
-};
 // a GeoJSON bridge for features
-shpwrite.download(
+const zipData = shpwrite.zip(
   {
     type: "FeatureCollection",
     features: [
@@ -63,10 +55,56 @@ shpwrite.download(
         },
       },
     ],
-  },
-  options
+  }
 );
-// triggers a download of a zip file with shapefiles contained within.
+
+```
+
+## Options Example
+
+```js
+var shpwrite = require("shp-write");
+
+const options = {
+  folder: "my_internal_shapes_folder",
+  filename: "my_zip_filename",
+  outputType: "blob",
+  compression: "DEFLATE",
+  types: {
+    point: "mypoints",
+    polygon: "mypolygons",
+    line: "mylines",
+  },
+};
+
+// a GeoJSON bridge for features
+const zipData = shpwrite.zip(
+  {
+    type: "FeatureCollection",
+    features: [
+      {
+        type: "Feature",
+        geometry: {
+          type: "Point",
+          coordinates: [0, 0],
+        },
+        properties: {
+          name: "Foo",
+        },
+      },
+      {
+        type: "Feature",
+        geometry: {
+          type: "Point",
+          coordinates: [0, 10],
+        },
+        properties: {
+          name: "Bar",
+        },
+      },
+    ],
+  }
+);
 ```
 
 ## API
