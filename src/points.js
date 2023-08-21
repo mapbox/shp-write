@@ -11,7 +11,7 @@ module.exports.write = function writePoints(coordinates, extent, shpView, shxVie
         // HEADER
         // 4 record number
         // 4 content length in 16-bit words (20/2)
-        shpView.setInt32(shpI, i);
+        shpView.setInt32(shpI, i + 1);
         shpView.setInt32(shpI + 4, 10);
 
         // record
