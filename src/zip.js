@@ -11,7 +11,7 @@ module.exports = function (
   let zip = new JSZip();
   let zipTarget = zip;
   if (options && options.folder) {
-    zipTarget = zip.folder(options && options.folder ? options.folder : "layers");
+    zipTarget = zip.folder(options.folder);
   }
 
   [
