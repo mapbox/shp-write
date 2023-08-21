@@ -27,7 +27,7 @@ function finish(err, files) {
 }
 
 function toBuffer(ab) {
-    var buffer = new Buffer(ab.byteLength),
+    var buffer = Buffer.alloc(ab.byteLength),
         view = new Uint8Array(ab);
     for (var i = 0; i < buffer.length; ++i) { buffer[i] = view[i]; }
     return buffer;

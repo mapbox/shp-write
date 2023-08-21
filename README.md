@@ -29,11 +29,46 @@ Or in a browser
 ```js
 var shpwrite = require("shp-write");
 
-// (minimal) set names for feature types and zipped folder
-var options = {
-  folder: "myshapes",
-  filename: "mydownload",
-  outputType: "base64",
+// a GeoJSON bridge for features
+const zipData = shpwrite.zip(
+  {
+    type: "FeatureCollection",
+    features: [
+      {
+        type: "Feature",
+        geometry: {
+          type: "Point",
+          coordinates: [0, 0],
+        },
+        properties: {
+          name: "Foo",
+        },
+      },
+      {
+        type: "Feature",
+        geometry: {
+          type: "Point",
+          coordinates: [0, 10],
+        },
+        properties: {
+          name: "Bar",
+        },
+      },
+    ],
+  }
+);
+
+```
+
+## Options Example
+
+```js
+var shpwrite = require("shp-write");
+
+const options = {
+  folder: "my_internal_shapes_folder",
+  filename: "my_zip_filename",
+  outputType: "blob",
   compression: "DEFLATE",
   types: {
     point: "mypoints",
@@ -41,8 +76,9 @@ var options = {
     line: "mylines",
   },
 };
+
 // a GeoJSON bridge for features
-shpwrite.download(
+const zipData = shpwrite.zip(
   {
     type: "FeatureCollection",
     features: [
@@ -70,7 +106,6 @@ shpwrite.download(
   },
   options
 );
-// triggers a download of a zip file with shapefiles contained within.
 ```
 
 ## API
