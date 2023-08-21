@@ -103,7 +103,8 @@ const zipData = shpwrite.zip(
         },
       },
     ],
-  }
+  },
+  options
 );
 ```
 
