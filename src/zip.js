@@ -3,7 +3,19 @@ var write = require("./write"),
   prj = require("./prj"),
   JSZip = require("jszip");
 
-module.exports = function (gj, options, stream = false) {
+module.exports = function (
+  gj,
+  options = {
+    compression: 'STORE',
+    outputType: 'base64',
+    types: {
+      point: "mypoints",
+      polygon: "mypolygons",
+      line: "mylines",
+    },
+  },
+  stream = false
+) {
   var zip = new JSZip(),
     layers = zip.folder(options && options.folder ? options.folder : "layers");
 
@@ -36,14 +48,18 @@ module.exports = function (gj, options, stream = false) {
     }
   });
 
-  var generateOptions = { type: "base64", compression: "STORE" };
+  var generateOptions = {};
+  if (options && options.outputType) {
+    generateOptions.type = options.outputType;
+  }
 
-  // Our implementation will DEFINITELY be in the browser for now.
-  // if (!process.browser) {
-  //   generateOptions.type = "nodebuffer";
-  // }
+  if (options && options.compresssion) {
+    generateOptions.compression = options.compression;
+  }
 
-  if (stream)
+  if (stream) {
     return zip.generateNodeStream({ ...generateOptions, streamFiles: true });
-  else return zip.generateAsync(generateOptions);
+  }
+
+  return zip.generateAsync(generateOptions);
 };

@@ -25,19 +25,14 @@
     "js"
   ],
   "author": "Tom MacWright",
-  "contributors": [
-    {
-      "name": "Nick Baugh",
-      "email": "niftylettuce@gmail.com"
-    }
-  ],
   "license": "BSD-2-Clause",
   "bugs": {
     "url": "https://github.com/mapbox/shp-write/issues"
   },
   "dependencies": {
     "dbf": "0.2.0",
-    "jszip": "3.6.0"
+    "jszip": "3.6.0",
+    "file-saver": "2.0.5"
   },
   "devDependencies": {
     "browserify": "^13.0.0",

@@ -17,18 +17,50 @@ declare module "shp-write" {
   }
 
   export interface DownloadOptions {
-    folder: string;
+    folder?: string;
     filename?: string;
     types: {
-      point: string;
-      polygon: string;
-      line: string;
+      point?: string;
+      polygon?: string;
+      line?: string;
+      multipolygon?: string;
+      multiline?: string;
     };
   }
 
+  type Compression = 'STORE' | 'DEFLATE';
+  interface OutputByType {
+    base64: string;
+    string: string;
+    text: string;
+    binarystring: string;
+    array: number[];
+    uint8array: Uint8Array;
+    arraybuffer: ArrayBuffer;
+    blob: Blob;
+    nodebuffer: Buffer;
+    stream: ReadableStream;
+  }
+  type OutputType = keyof OutputByType;
+
+  export interface ZipOptions {
+    compression: Compression,
+    outputType: OutputType
+  }
+
+  DEFAULT_ZIP_OPTIONS = {
+    compression: 'STORE',
+    outputType: 'base64',
+    types: {
+      point: "mypoints",
+      polygon: "mypolygons",
+      line: "mylines",
+    },
+  };
+
   export function download(
     geojson: GeoJSON.FeatureCollection,
-    options?: DownloadOptions
+    options?: DownloadOptions & ZipOptions = DEFAULT_ZIP_OPTIONS
   ): void;
 
   export function write(
@@ -45,5 +77,8 @@ declare module "shp-write" {
     ) => void
   ): void;
 
-  export function zip(geojson: GeoJSON.FeatureCollection): void;
+  export function zip<T extends OutputType>(
+    geojson: GeoJSON.FeatureCollection,
+    options: DownloadOptions & ZipOptions = DEFAULT_ZIP_OPTIONS,
+    stream = false): Promise<OutputByType[T]>;
 }
