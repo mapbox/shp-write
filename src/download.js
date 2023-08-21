@@ -5,18 +5,7 @@ var saveAs = require("file-saver").saveAs;
  * @deprecated may be removed in a future version, please use an external 
  * download library
  */
-module.exports = function (
-    gj, 
-    options = {
-      compression: 'STORE',
-      outputType: 'base64',
-      types: {
-        point: "mypoints",
-        polygon: "mypolygons",
-        line: "mylines",
-      },
-    },
-) {
+module.exports = function (gj, options) {
   let filename = 'download';
 
   // since we only need a single filename object, we can use either the folder or

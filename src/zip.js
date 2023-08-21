@@ -5,19 +5,14 @@ var write = require("./write"),
 
 module.exports = function (
   gj,
-  options = {
-    compression: 'STORE',
-    outputType: 'base64',
-    types: {
-      point: "mypoints",
-      polygon: "mypolygons",
-      line: "mylines",
-    },
-  },
+  options,
   stream = false
 ) {
-  var zip = new JSZip(),
-    layers = zip.folder(options && options.folder ? options.folder : "layers");
+  let zip = new JSZip();
+  let zipTarget = zip;
+  if (options && options.folder) {
+    zipTarget = zip.folder(options && options.folder ? options.folder : "layers");
+  }
 
   [
     geojson.point(gj),
@@ -39,27 +34,31 @@ module.exports = function (
             options && options.types[l.type.toLowerCase()]
               ? options.types[l.type.toLowerCase()]
               : l.type;
-          layers.file(fileName + ".shp", files.shp.buffer, { binary: true });
-          layers.file(fileName + ".shx", files.shx.buffer, { binary: true });
-          layers.file(fileName + ".dbf", files.dbf.buffer, { binary: true });
-          layers.file(fileName + ".prj", prj);
+          zipTarget.file(fileName + ".shp", files.shp.buffer, { binary: true });
+          zipTarget.file(fileName + ".shx", files.shx.buffer, { binary: true });
+          zipTarget.file(fileName + ".dbf", files.dbf.buffer, { binary: true });
+          zipTarget.file(fileName + ".prj", prj);
         }
       );
     }
   });
 
-  var generateOptions = {};
-  if (options && options.outputType) {
-    generateOptions.type = options.outputType;
+  var zipOptions = {};
+  if (!options || !options.outputType) {
+    zipOptions.type = "base64";
+  } else {
+    zipOptions.type = options.outputType;
   }
 
-  if (options && options.compresssion) {
-    generateOptions.compression = options.compression;
+  if (!options || !options.compression) {
+    zipOptions.compression = "DEFLATE";
+  } else {
+    zipOptions.compression = options.compression;
   }
 
   if (stream) {
-    return zip.generateNodeStream({ ...generateOptions, streamFiles: true });
+    return zip.generateNodeStream({ ...zipOptions, streamFiles: true });
   }
 
-  return zip.generateAsync(generateOptions);
+  return zip.generateAsync(zipOptions);
 };

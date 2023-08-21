@@ -29,12 +29,8 @@ Or in a browser
 ```js
 var shpwrite = require("shp-write");
 
-// (minimal) set names for feature types and zipped folder
+// (minimal) set names for feature types
 var options = {
-  folder: "myshapes",
-  filename: "mydownload",
-  outputType: "base64",
-  compression: "DEFLATE",
   types: {
     point: "mypoints",
     polygon: "mypolygons",
