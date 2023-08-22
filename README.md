@@ -8,13 +8,17 @@ ZIP file downloads in-browser.
 
 ## Usage
 
-For node.js or [browserify](https://github.com/substack/node-browserify)
+For npm
 
-    npm install --save shp-write
+    npm install --save @mapbox/shp-write
+  
+Yarn
+
+    yarn add @mapbox/shp-write
 
 Or in a browser
 
-    https://unpkg.com/shp-write@latest/shpwrite.js
+    https://unpkg.com/@mapbox/shp-write@latest/shpwrite.js
 
 ## Caveats
 
@@ -27,7 +31,7 @@ Or in a browser
 ## Minimal Example
 
 ```js
-var shpwrite = require("shp-write");
+var shpwrite = require("@mapbox/shp-write");
 
 // a GeoJSON bridge for features
 const zipData = shpwrite.zip(
@@ -63,7 +67,7 @@ const zipData = shpwrite.zip(
 ## Options Example
 
 ```js
-var shpwrite = require("shp-write");
+var shpwrite = require("@mapbox/shp-write");
 
 const options = {
   folder: "my_internal_shapes_folder",

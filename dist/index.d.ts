@@ -1,4 +1,4 @@
-declare module "shp-write" {
+declare module "@mapbox/shp-write" {
   export enum OGCGeometry {
     NULL,
     POINT,
