@@ -1,13 +1,13 @@
 {
   "name": "@mapbox/shp-write",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "write shapefiles from pure javascript",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "test": "mocha -R spec",
     "prepublish": "npm run make",
-    "make": "browserify -s shpwrite ./ > shpwrite.js"
+    "make": "browserify -s shpwrite ./ > dist/index.min.js"
   },
   "repository": {
     "type": "git",
@@ -16,8 +16,7 @@
   "files": [
     "dist/index.js",
     "dist/index.d.ts",
-    "src",
-    "shpwrite.js"
+    "src"
   ],
   "keywords": [
     "shapefile",
