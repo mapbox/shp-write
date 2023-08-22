@@ -7,7 +7,7 @@
   "scripts": {
     "test": "mocha -R spec",
     "prepublish": "npm run make",
-    "make": "browserify -s shpwrite ./ > dist/index.min.js"
+    "make": "browserify -s shpwrite ./ > shpwrite.js"
   },
   "repository": {
     "type": "git",
@@ -16,7 +16,8 @@
   "files": [
     "dist/index.js",
     "dist/index.d.ts",
-    "src"
+    "src",
+    "shpwrite.js"
   ],
   "keywords": [
     "shapefile",

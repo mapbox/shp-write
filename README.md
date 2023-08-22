@@ -18,7 +18,7 @@ Yarn
 
 Or in a browser
 
-    https://unpkg.com/shp-write@latest/shpwrite.js
+    https://unpkg.com/@mapbox/shp-write@latest/shpwrite.js
 
 ## Caveats
 
