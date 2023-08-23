@@ -18,6 +18,7 @@ declare module "@mapbox/shp-write" {
   export interface DownloadOptions {
     folder?: string;
     filename?: string;
+    prj?: string;
     types?: {
       point?: string;
       polygon?: string;

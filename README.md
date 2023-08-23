@@ -1,6 +1,11 @@
-[![Build Status](https://secure.travis-ci.org/mapbox/shp-write.svg?branch=master)](http://travis-ci.org/mapbox/shp-write)
-
 # shp-write
+
+# ANNOUNCEMENT! 
+
+The npm package location (and subsequently unpkg url) for this repo has changed! 
+
+tl;dr: `shp-write` -> `@mapbox/shp-write`
+
 
 Writes shapefile in pure javascript. Uses [dbf](https://github.com/tmcw/dbf)
 for the data component, and [jsZIP](http://stuk.github.io/jszip/) to generate
@@ -77,7 +82,7 @@ const options = {
   types: {
     point: "mypoints",
     polygon: "mypolygons",
-    line: "mylines",
+    polyline: "mylines",
   },
 };
 
@@ -110,6 +115,15 @@ const zipData = shpwrite.zip(
   },
   options
 );
+```
+
+## Custom .prj file
+To pass a custom [WKT string](http://www.opengeospatial.org/standards/wkt-crs) in the .prj file to define a different projection the prj option can be used:
+
+```js
+var options = {
+    prj: 'PROJCS["Amersfoort / RD New",GEOGCS["Amersfoort",DATUM["D_Amersfoort",SPHEROID["Bessel_1841",6377397.155,299.1528128]],PRIMEM["Greenwich",0],UNIT["Degree",0.017453292519943295]],PROJECTION["Stereographic_North_Pole"],PARAMETER["standard_parallel_1",52.15616055555555],PARAMETER["central_meridian",5.38763888888889],PARAMETER["scale_factor",0.9999079],PARAMETER["false_easting",155000],PARAMETER["false_northing",463000],UNIT["Meter",1]]'
+}
 ```
 
 ## API

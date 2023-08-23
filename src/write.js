@@ -1,11 +1,8 @@
-var types = require('./types'),
-    dbf = require('dbf'),
-    prj = require('./prj'),
-    ext = require('./extent'),
-    getFields = require('./fields'),
-    assert = require('assert'),
-    pointWriter = require('./points'),
-    polyWriter = require('./poly');
+var types = require('./types');
+var dbf = require('dbf');
+var prj = require('./prj');
+var pointWriter = require('./points');
+var polyWriter = require('./poly');
 
 var writers = {
     1: pointWriter,
@@ -13,23 +10,21 @@ var writers = {
     3: polyWriter
 };
 
-var recordHeaderLength = 8;
-
 module.exports = write;
 
 // Low-level writing interface
 function write(rows, geometry_type, geometries, callback) {
 
-    var TYPE = types.geometries[geometry_type],
-        writer = writers[TYPE],
-        parts = writer.parts(geometries, TYPE),
-        shpLength = 100 + (parts - geometries.length) * 4 + writer.shpLength(geometries),
-        shxLength = 100 + writer.shxLength(geometries),
-        shpBuffer = new ArrayBuffer(shpLength),
-        shpView = new DataView(shpBuffer),
-        shxBuffer = new ArrayBuffer(shxLength),
-        shxView = new DataView(shxBuffer),
-        extent = writer.extent(geometries);
+    var TYPE = types.geometries[geometry_type];
+    var writer = writers[TYPE];
+    var parts = writer.parts(geometries, TYPE);
+    var shpLength = 100 + (parts - geometries.length) * 4 + writer.shpLength(geometries);
+    var shxLength = 100 + writer.shxLength(geometries);
+    var shpBuffer = new ArrayBuffer(shpLength);
+    var shpView = new DataView(shpBuffer);
+    var shxBuffer = new ArrayBuffer(shxLength);
+    var shxView = new DataView(shxBuffer);
+    var extent = writer.extent(geometries);
 
     writeHeader(shpView, TYPE);
     writeHeader(shxView, TYPE);
