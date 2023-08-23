@@ -1,20 +1,19 @@
 declare module "@mapbox/shp-write" {
-  export enum OGCGeometry {
-    NULL,
-    POINT,
-    POLYLINE,
-    POLYGON,
-    MULTIPOINT,
-    POINTZ,
-    POLYLINEZ,
-    POLYGONZ,
-    MULTIPOINTZ,
-    POINTM,
-    POLYLINEM,
-    POLYGONM,
-    MULTIPOINTM,
-    MULTIPATCH,
-  }
+  export type OGCGeometry =
+    'NULL' |
+    'POINT' |
+    'POLYLINE' |
+    'POLYGON' |
+    'MULTIPOINT' |
+    'POINTZ' |
+    'POLYLINEZ' |
+    'POLYGONZ' |
+    'MULTIPOINTZ' |
+    'POINTM' |
+    'POLYLINEM' |
+    'POLYGONM' |
+    'MULTIPOINTM' |
+    'MULTIPATCH';
 
   export interface DownloadOptions {
     folder?: string;
@@ -50,7 +49,7 @@ declare module "@mapbox/shp-write" {
 
   export function download(
     geojson: GeoJSON.FeatureCollection,
-    options?: DownloadOptions & ZipOptions = {}
+    options?: DownloadOptions & ZipOptions
   ): void;
 
   export function write(
@@ -69,6 +68,6 @@ declare module "@mapbox/shp-write" {
 
   export function zip<T extends OutputType>(
     geojson: GeoJSON.FeatureCollection,
-    options: DownloadOptions & ZipOptions = {},
-    stream = false): Promise<OutputByType[T]>;
+    options?: DownloadOptions & ZipOptions,
+    stream?: boolean): Promise<OutputByType[T]>;
 }
