@@ -5,13 +5,13 @@ module.exports.polygon = justType("Polygon", "POLYGON");
 module.exports.multipolygon = justType("MultiPolygon", "POLYGON");
 
 /**
- * 
+ * Generate a function that returns an object with the geometries, properties, and type of the given GeoJSON type
  * @param {string} type the GeoJSON type
  * @param {string} TYPE the Shapefile type
- * @returns {(gj) => 
+ * @returns {(gj: { features: Feature[] }) => 
  *    {
- *      geometries: any[],
- *      properties: Record<string, string>,
+ *      geometries: number[] | number[][] | number[][][] | number[][][][],
+ *      properties: {Object.<string, string>},
  *      type: string
  *    }} a function that returns an object with the geometries, properties, and type of the given GeoJSON type
  */
@@ -38,7 +38,7 @@ function justCoords(feature) {
 /**
  * 
  * @param {Feature} feature The feature to get the properties from 
- * @returns 
+ * @returns {Object.<string, string>}
  */
 function justProps(feature) {
   return feature.properties;
