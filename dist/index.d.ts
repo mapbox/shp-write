@@ -68,6 +68,6 @@ declare module "@mapbox/shp-write" {
 
   export function zip<T extends OutputType>(
     geojson: GeoJSON.FeatureCollection,
-    options: DownloadOptions & ZipOptions,
-    stream: boolean): Promise<OutputByType[T]>;
+    options?: DownloadOptions & ZipOptions,
+    stream?: boolean): Promise<OutputByType[T]>;
 }
