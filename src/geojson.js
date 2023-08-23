@@ -4,6 +4,12 @@ module.exports.multiline = justType("MultiLineString", "POLYLINE");
 module.exports.polygon = justType("Polygon", "POLYGON");
 module.exports.multipolygon = justType("MultiPolygon", "POLYGON");
 
+/**
+ * 
+ * @param {string} type the GeoJSON type
+ * @param {string} TYPE the Shapefile type
+ * @returns 
+ */
 function justType(type, TYPE) {
   return function (gj) {
     var oftype = gj.features.filter(isType(type));

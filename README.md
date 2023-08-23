@@ -1,6 +1,11 @@
-[![Build Status](https://secure.travis-ci.org/mapbox/shp-write.svg?branch=master)](http://travis-ci.org/mapbox/shp-write)
-
 # shp-write
+
+# ANNOUNCEMENT! 
+
+The npm package location (and subsequently unpkg url) for this repo has changed! 
+
+tl;dr: `shp-write` -> `@mapbox/shp-write`
+
 
 Writes shapefile in pure javascript. Uses [dbf](https://github.com/tmcw/dbf)
 for the data component, and [jsZIP](http://stuk.github.io/jszip/) to generate
@@ -77,7 +82,7 @@ const options = {
   types: {
     point: "mypoints",
     polygon: "mypolygons",
-    line: "mylines",
+    polyline: "mylines",
   },
 };
 

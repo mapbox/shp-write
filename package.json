@@ -1,13 +1,14 @@
 {
   "name": "@mapbox/shp-write",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "description": "write shapefiles from pure javascript",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "test": "mocha -R spec",
     "prepublish": "npm run make",
-    "make": "browserify -s shpwrite ./ > shpwrite.js"
+    "make": "browserify -s shpwrite ./ > shpwrite.js",
+    "make-test": "browserify indexTest.js > shpwrite.js"
   },
   "repository": {
     "type": "git",
@@ -30,15 +31,16 @@
     "url": "https://github.com/mapbox/shp-write/issues"
   },
   "dependencies": {
+    "@mapbox/shp-write": "^0.4.2",
     "dbf": "0.2.0",
-    "jszip": "3.6.0",
-    "file-saver": "2.0.5"
+    "file-saver": "2.0.5",
+    "jszip": "^3.10.1"
   },
   "devDependencies": {
-    "browserify": "^13.0.0",
+    "browserify": "^17.0.0",
     "cz-conventional-changelog": "^1.2.0",
     "expect.js": "~0.3.1",
-    "mocha": "~2.4.5"
+    "mocha": "^10.2.0"
   },
   "config": {
     "commitizen": {
