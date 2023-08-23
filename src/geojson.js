@@ -8,12 +8,7 @@ module.exports.multipolygon = justType("MultiPolygon", "POLYGON");
  * Generate a function that returns an object with the geometries, properties, and type of the given GeoJSON type
  * @param {string} type the GeoJSON type
  * @param {string} TYPE the Shapefile type
- * @returns {(gj: { features: Feature[] }) => 
- *    {
- *      geometries: number[] | number[][] | number[][][] | number[][][][],
- *      properties: {Object.<string, string>},
- *      type: string
- *    }} a function that returns an object with the geometries, properties, and type of the given GeoJSON type
+ * @returns {(gj: { features: Feature[] }) => { geometries: number[] | number[][] | number[][][] | number[][][][], properties: {Object.<string, string>}, type: string }}
  */
 function justType(gjType, shpType) {
   return function (gj) {
