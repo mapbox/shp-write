@@ -75,8 +75,8 @@ require('./src/download')({
     }
     ]
 }, {
-    file: 'shapefiles',
-    folder: 'shapefiles',
+    file: 'my_zip_filename',  // if empty, filename will be download.zip
+    folder: 'my_internal_shapes_folder', // leave empty to put in root
     outputType: 'blob',
     compression: 'DEFLATE',
     types: {

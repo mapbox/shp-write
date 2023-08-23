@@ -1,7 +1,8 @@
-var write = require("./write"),
-  geojson = require("./geojson"),
-  prj = require("./prj"),
-  JSZip = require("jszip");
+var write = require("./write");
+var geojson = require("./geojson");
+var defaultPrj = require('./prj');
+var JSZip = require("jszip");
+
 
 module.exports = function (
   gj,
@@ -13,6 +14,8 @@ module.exports = function (
   if (options && options.folder) {
     zipTarget = zip.folder(options.folder);
   }
+
+  var prj = (options && options.prj) ? options.prj : defaultPrj;
 
   [
     geojson.point(gj),
