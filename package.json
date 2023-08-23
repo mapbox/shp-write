@@ -31,7 +31,6 @@
     "url": "https://github.com/mapbox/shp-write/issues"
   },
   "dependencies": {
-    "@mapbox/shp-write": "^0.4.2",
     "dbf": "0.2.0",
     "file-saver": "2.0.5",
     "jszip": "^3.10.1"
