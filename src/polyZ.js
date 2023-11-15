@@ -54,8 +54,6 @@ module.exports.write = function writePoints(geometries, extent, shpView, shxView
       );
     }
 
-    shpI += 56 + (noParts - 1) * 4;
-
     var zMin = Number.MAX_VALUE;
     var zMax = -Number.MAX_VALUE;
 
