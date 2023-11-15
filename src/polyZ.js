@@ -88,7 +88,7 @@ module.exports.write = function writePoints(geometries, extent, shpView, shxView
 module.exports.shpLength = function (geometries) {
   var flattened = justCoords(geometries);
   var length = geometries.length * 56 + flattened.length * 16;
-  return (length += 32 + flattened.length * 16);
+  return length + 32 + flattened.length * 16;
 };
 
 module.exports.shxLength = function (geometries) {
