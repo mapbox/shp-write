@@ -1,19 +1,19 @@
 declare module "@mapbox/shp-write" {
   export type OGCGeometry =
-    'NULL' |
-    'POINT' |
-    'POLYLINE' |
-    'POLYGON' |
-    'MULTIPOINT' |
-    'POINTZ' |
-    'POLYLINEZ' |
-    'POLYGONZ' |
-    'MULTIPOINTZ' |
-    'POINTM' |
-    'POLYLINEM' |
-    'POLYGONM' |
-    'MULTIPOINTM' |
-    'MULTIPATCH';
+    | "NULL"
+    | "POINT"
+    | "POLYLINE"
+    | "POLYGON"
+    | "MULTIPOINT"
+    | "POINTZ"
+    | "POLYLINEZ"
+    | "POLYGONZ"
+    | "MULTIPOINTZ"
+    | "POINTM"
+    | "POLYLINEM"
+    | "POLYGONM"
+    | "MULTIPOINTM"
+    | "MULTIPATCH";
 
   export interface DownloadOptions {
     folder?: string;
@@ -28,7 +28,7 @@ declare module "@mapbox/shp-write" {
     };
   }
 
-  type Compression = 'STORE' | 'DEFLATE';
+  type Compression = "STORE" | "DEFLATE";
   interface OutputByType {
     base64: string;
     string: string;
@@ -44,14 +44,25 @@ declare module "@mapbox/shp-write" {
   type OutputType = keyof OutputByType;
 
   export interface ZipOptions {
-    compression: Compression,
-    outputType: OutputType
+    compression: Compression;
+    outputType: OutputType;
   }
 
-  export function download(
-    geojson: GeoJSON.FeatureCollection,
-    options?: DownloadOptions & ZipOptions
-  ): void;
+  export function download(geojson: GeoJSON.FeatureCollection, options?: DownloadOptions & ZipOptions): void;
+
+  type PreparedGeojsonForWriting = {
+    geometries: number[] | number[][] | number[][][] | number[][][][];
+    properties: {};
+    type: string;
+  };
+
+  export var geojson = {
+    point: (geojson: { features: Feature[] }) => PreparedGeojsonForWriting,
+    line: (geojson: { features: Feature[] }) => PreparedGeojsonForWriting,
+    multiline: (geojson: { features: Feature[] }) => PreparedGeojsonForWriting,
+    polygon: (geojson: { features: Feature[] }) => PreparedGeojsonForWriting,
+    multipolygon: (geojson: { features: Feature[] }) => PreparedGeojsonForWriting,
+  };
 
   export function write(
     data: Array<object>,
@@ -70,5 +81,6 @@ declare module "@mapbox/shp-write" {
   export function zip<T extends OutputType>(
     geojson: GeoJSON.FeatureCollection,
     options?: DownloadOptions & ZipOptions,
-    stream?: boolean): Promise<OutputByType[T]>;
+    stream?: boolean
+  ): Promise<OutputByType[T]>;
 }
