@@ -1,15 +1,16 @@
 # shp-write
 
-# ANNOUNCEMENT! 
+Writes shapefile in pure javascript. 
 
-The npm package location (and subsequently unpkg url) for this repo has changed! 
-
-tl;dr: `shp-write` -> `@mapbox/shp-write`
-
-
-Writes shapefile in pure javascript. Uses [dbf](https://github.com/tmcw/dbf)
+Uses [dbf](https://github.com/tmcw/dbf)
 for the data component, and [jsZIP](http://stuk.github.io/jszip/) to generate
 ZIP file downloads in-browser.
+
+> [!IMPORTANT]  
+> **The package location for this repo has changed!**
+>
+> tl;dr: `shp-write` -> [`@mapbox/shp-write`](https://www.npmjs.com/package/@mapbox/shp-write)
+
 
 ## Usage
 
@@ -169,3 +170,4 @@ user should instead rely on an external library for this functionality like
 ## Contributors
 
 - Nick Baugh <niftylettuce@gmail.com>
+- Charles Richardson <charlesrichardsonusa@gmail.com>
