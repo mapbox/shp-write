@@ -1,10 +1,7 @@
-# shp-write
+# @mapbox/shp-write
 
-Writes shapefile in pure javascript. 
-
-Uses [dbf](https://github.com/tmcw/dbf)
-for the data component, and [jsZIP](http://stuk.github.io/jszip/) to generate
-ZIP file downloads in-browser.
+Writes shapefile in pure javascript. Uses [dbf](https://github.com/tmcw/dbf)
+for the data component, and [jsZIP](http://stuk.github.io/jszip/) to generate downloads in-browser.
 
 > [!IMPORTANT]  
 > **The package location for this repo has changed!**
@@ -14,7 +11,7 @@ ZIP file downloads in-browser.
 
 ## Usage
 
-For npm
+NPM
 
     npm install --save @mapbox/shp-write
   
@@ -22,7 +19,7 @@ Yarn
 
     yarn add @mapbox/shp-write
 
-Or in a browser
+Browser
 
     https://unpkg.com/@mapbox/shp-write@latest/shpwrite.js
 
@@ -30,18 +27,16 @@ Or in a browser
 
 - Requires a capable fancy modern browser with [Typed Arrays](http://caniuse.com/#feat=typedarrays)
   support
-- Geometries: Point, LineString, Polygon, MultiLineString, MultiPolygon
-- Tabular-style properties export with Shapefile's field name length limit
+- Supports geometries: `Point`, `LineString`, `Polygon`, `MultiLineString`, `MultiPolygon`
+- Tabular-style properties export with [10 character field name length limit](https://en.wikipedia.org/wiki/Shapefile#:~:text=Maximum%20length%20of%20field%20names%20is%2010%20characters) 
 - Uses jsZip for ZIP files, but [compression is buggy](https://github.com/Stuk/jszip/issues/53) so it uses STORE instead of DEFLATE.
 
-## Minimal Example
+## Example
 
 ```js
 var shpwrite = require("@mapbox/shp-write");
 
-// a GeoJSON bridge for features
-const zipData = shpwrite.zip(
-  {
+const geoJSON = {
     type: "FeatureCollection",
     features: [
       {
@@ -65,16 +60,9 @@ const zipData = shpwrite.zip(
         },
       },
     ],
-  }
-);
+  };
 
-```
-
-## Options Example
-
-```js
-var shpwrite = require("@mapbox/shp-write");
-
+// Optional custom options passed to the underlying `zip` call 
 const options = {
   folder: "my_internal_shapes_folder",
   filename: "my_zip_filename",
@@ -87,35 +75,7 @@ const options = {
   },
 };
 
-// a GeoJSON bridge for features
-const zipData = shpwrite.zip(
-  {
-    type: "FeatureCollection",
-    features: [
-      {
-        type: "Feature",
-        geometry: {
-          type: "Point",
-          coordinates: [0, 0],
-        },
-        properties: {
-          name: "Foo",
-        },
-      },
-      {
-        type: "Feature",
-        geometry: {
-          type: "Point",
-          coordinates: [0, 10],
-        },
-        properties: {
-          name: "Bar",
-        },
-      },
-    ],
-  },
-  options
-);
+const zipData = shpwrite.zip(geoJSON,options);
 ```
 
 ## Custom .prj file
@@ -128,18 +88,27 @@ var options = {
 ```
 
 ## API
+
 ### `write(data, geometrytype, geometries, callback)`
 
-Given data, an array of objects for each row of data, geometry, the OGC standard
-geometry type (like `POINT`), geometries, a list of geometries as bare coordinate
-arrays, generate a shapfile and call the callback with `err` and an object with
+Generates a shapefile and calls the callback with err and an object containing shp, shx, and dbf DataViews.
 
+* data: Array of objects for each row of data.
+* geometrytype: The OGC standard geometry type (e.g., POINT).
+* geometries: List of geometries as bare coordinate arrays.
+* callback: Function to handle the generated DataViews.
+  
 ```js
-{
-    shp: DataView(),
-    shx: DataView(),
-    dbf: DataView()
-}
+shpwrite.write(data, geometrytype, geometries, (err, result) => {
+  // result is equal to
+  // {
+  //  shp: DataView(),
+  //  shx: DataView(),
+  //  dbf: DataView()
+  // }
+  if (err) throw err;
+  console.log(result);
+});
 ```
 
 ### `zip(geojson, [options])`
@@ -147,17 +116,14 @@ arrays, generate a shapfile and call the callback with `err` and an object with
 Generate a ArrayBuffer of a zipped shapefile, dbf, and prj, from a GeoJSON
 object.
 
-### DEPRECTEAD! May be removed in a future version
 ### `download(geojson, [options])`
 
-Given a [GeoJSON](http://geojson.org/) FeatureCollection as an object,
-converts convertible features into Shapefiles and triggers a download. 
-
-The additional `options` parameter is passed to the underlying `zip` call. 
-
-This is now marked as deprecated because it applies to browsers only and the
+> [!WARNING]  
+> This is now marked as deprecated because it applies to browsers only and the
 user should instead rely on an external library for this functionality like
 `file-saver` or `downloadjs`
+
+Given a [GeoJSON](http://geojson.org/) FeatureCollection as an object, converts convertible features into Shapefiles and triggers a download. `options` is passed to the underlying `zip` call. 
 
 ## Other Implementations
 
