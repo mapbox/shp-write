@@ -81,18 +81,36 @@ module.exports.extent = function(coordinates) {
 };
 
 function parts(geometries, TYPE) {
-    var no = 1;
-    if (TYPE === types.geometries.POLYGON || TYPE === types.geometries.POLYLINE)  {
-        no = geometries.reduce(function (no, coords) {
-            no += coords.length;
-            if (Array.isArray(coords[0][0][0])) { // multi
-                no += coords.reduce(function (no, rings) {
-                    return no + rings.length - 1; // minus outer
-                }, 0);
-            }
-            return no;
+  var no = 1;
+  if (TYPE === types.geometries.POLYGON || TYPE === types.geometries.POLYLINE)  {
+    no = geometries.reduce(function (no, coords) {
+      no += coords.length;
+      if (Array.isArray(coords[0][0][0])) { // multi
+        no += coords.reduce(function (no, rings) {
+          return no + rings.length - 1; // minus outer
         }, 0);
-    }
+      // For LineString: coords is [[x1,y1], [x2,y2], ...] - this is 1 part
+      // For MultiLineString: coords is [[[x1,y1], [x2,y2]], [[x3,y3], [x4,y4]]] - multiple parts
+      // For Polygon: coords is [[[outer ring]], [[hole1]], [[hole2]]] - multiple parts
+      if (Array.isArray(coords[0]) && Array.isArray(coords[0][0])) {
+        // Check if this is a multi-geometry or polygon with holes
+        if (Array.isArray(coords[0][0][0])) {
+          // Multi-geometry: each element is a separate part
+          no += coords.length;
+          // For multi-polygons, also count inner rings
+          no += coords.reduce(function (innerNo, rings) {
+            return innerNo + rings.length - 1; // minus outer ring
+          }, 0);
+        } else {
+          // Simple LineString or Polygon outer ring: 1 part
+          no += 1;
+        }
+      } else {
+        // Fallback: 1 part
+        no += 1;
+      }
+      return no;
+    }, 0);
     return no;
 }
 
