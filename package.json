@@ -1,6 +1,6 @@
 {
   "name": "@mapbox/shp-write",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "description": "write shapefiles from pure javascript",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -45,5 +45,8 @@
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
